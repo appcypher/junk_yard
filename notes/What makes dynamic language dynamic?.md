@@ -6,6 +6,4 @@
 4. Ability to add/remove fields from an object
 5. Getting meta information about Your program
 
-There is a point at which some of these features overlap, even for extremely dynamic cases like `eval`. I can link my C++ program with [cling](https://github.com/root-project/cling) and call eval'd C++ code for example.
-
-There are statically-typed languages that that provide some of the features mentioned above.
+Some statically-typed languages actually provide some of the features mentioned above. Features from both paradigms start to overlap at some point, even for the extremely dynamic cases like `eval`. For eaxample, I can link my C++ program with [cling](https://github.com/root-project/cling) and call eval'd C++ code.
