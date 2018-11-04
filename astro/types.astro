@@ -1,0 +1,22 @@
+# Can't decide if types should be struct by default.
+@:struct
+type Person =
+    var name, age :: String, Name
+
+# Distinct Type
+@:distinct
+type Age is Int # Age is a distinct type
+
+# Primitive Type
+@:primitive(Int64)
+type Age(number)
+
+# Abstract Type
+@:abstract
+type Humen(name, age)
+
+# GENERIC TYPE NAME
+# Where there is no single alphabet left to represent a generic type name
+foo :: List{A`} -> A`
+
+

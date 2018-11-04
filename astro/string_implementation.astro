@@ -6,13 +6,13 @@
 - flag [1 byte]
 
 type String:
-	var ptr :: Ptr{Byte}
+	var ptr :: *Byte
 	var unicode_length :: Int64
 	var byte_length :: Int64
 	var capacity :: Int64
 	var flag :: Byte
 
 type String:
-	var ptr :: Ptr{Byte}
+	var ptr :: *Byte
 	var unicode_length_and_flag :: Int64
 	var capacity :: Int64

@@ -56,3 +56,17 @@ typeguard =
 
 typedescription
     | (functiontype | typeatom) typeguard?
+
+
+// Assignment Pattern
+// x, y = 4, 5
+// x[1], y[2] = 4, 5
+// a.name, b.name = 5, 6
+// a.name, :age, :gender = 5, 6
+// age[2], :[3], :[4] = 1, 2, 3
+// [x, y, _, ...] = arr
+// (x, y) = tup
+// { x, y } = obj
+// { x, y }.name = obj
+// a.{ x, y } = obj
+// a.{ x, y }.name = obj

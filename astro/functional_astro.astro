@@ -24,10 +24,10 @@ type PaymentMethod =
     | Cheque(checkno)
     | Card(cardtype, cardno)
 
-fun print_payment_method(method):
-    | Cash => print "Paid in cash"
-    | { checkno } :: Cheque => print "paid by cheque ${checkno}"
-    | { cardtype, cardtype } :: Card => print "Paid with ${cardno} ${cardtype}"
+fun print_payment_method(method): match method:
+    Cash => print "Paid in cash"
+    Cheque { checkno } => print "paid by cheque ${checkno}"
+    Card { cardtype, cardtype } => print "Paid with ${cardno} ${cardtype}"
 
 type PaymentMethod is (Cash, Cheque, Card) # Tuple
 type PaymentMethod is Cash | Cheque | Card # Union
@@ -35,22 +35,6 @@ type PaymentMethod is Cash & Cheque & Card # Intersection
 
 type PaymentMethod = var name, age
 type PaymentMethod = Cash() | Cheque() | Card()
-
-@struct
-type Person = var name, age
-
-@distinct
-type Age is Int # Age is a distinct type
-
-@bitstype(Int64)
-type Person(number)
-
-@abstract
-type Person(name, age)
-
-# GENERIC TYPE NAME
-# Where there is no single alphabet left to represent a generic type name
-foo :: List{A`} -> A`
 
 # Functional Patterns in Astro
 # Currying

@@ -1,21 +1,29 @@
 #!/usr/bin/env astro
 
-# Astro Dict
+# Astro Dictionary
 export {
-    name: 'eventsmanager',
-    version: '0.1.0',
-    main: 'server/bin/server.js',
+    name: 'eventsmanager'
+    version: '0.1.0'
+    main: 'server/bin/server.js'
     scripts:
         'server:watch': 'astromon server/server.js'
         test: 'mocha tests'
-    labels: [ 'events', 'new ones\, and old ones' ],
-    boolean: true
-    number: 0.1.2
-    null: nil
+    labels: [ 'events', 'smart contract', 'first, second and third' ]
+    active: true
 }
 
+# TOML
+name = "eventsmanager"
+version = "0.1.0"
+main = "server/bin/server.js"
+labels = [ "events", ""]
+active = true
 
-# Custom
+[ scripts ]
+"server:watch": "astromon server/server.js"
+test: "mocha tests"
+
+# Custom [everything is a string]
 name = eventsmanager
 version = 0.1.0
 main = server/bin/server.astro
@@ -23,17 +31,5 @@ scripts =
     server:watch = astromon server/server.astro
     test = maestro tests
 labels =
-    events, new ones, 'hello, ones'
+    events, smart contract, 'first, second and third'
 active = true
-
-
-# TOML
-name = 'eventsmanager'
-version = '0.1.0'
-main = 'server/bin/server.js'
-
-[ scripts ]
-'server:watch': 'astromon server/server.js'
-test: 'mocha tests'
-
-[ labels ]

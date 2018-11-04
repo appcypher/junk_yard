@@ -1,20 +1,17 @@
 #!/usr/bin/env astro
-
+# C
 _name_
 _args_
 _fields_
 _type_
 
-
-__name__
-
+# Python
 foo.__name__
 foo.__args__
 foo.__fields__
 foo.__type__
 
-
-
+# Java
 foo.meta.name
 foo.meta.arguments
 foo.meta.type
@@ -27,14 +24,10 @@ foo.meta.types
 foo.meta.imports
 foo.meta.exports
 
+# Astro
+@:self.name
+@:module.name
+@:module.path
+@:compiler.target
 
-@self.name
-
-@meta.name(foo)
-
-@module.name
-
-@self.args
-
-@env.os
 

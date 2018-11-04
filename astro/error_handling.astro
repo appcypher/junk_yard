@@ -1,2 +1,59 @@
 #!/usr/bin/env astro
-let x = try! open 'file.md'
+
+#-
+ - An error handling idea I was playing with. I don't think it will make into Astro.
+ - It's not familiar and it adds another layer of complexity
+-#
+
+# Inko/Zig Error Handling
+# http://joeduffyblog.com/2016/02/07/the-error-model/
+
+#- Each expression that can raise must be handled separately -#
+
+# Error Propagation
+let x = try read_file('readme.md')
+
+# Error Handling
+let x = try read_file('readme.md'):
+	FileNotFoundError => ""
+	Ok { value } => value
+
+# Error Handling
+let x = read_file('readme.md') !! "Can't read file!"
+
+# Panicking
+let x = try! read_file('readme.md')
+
+# Error Type Annotation
+fun foo(): :: () -> Int (SomeError!, SomeOtherError!)
+	let x = try bar()
+	let y = try baz()
+
+# Fail-safe Measures
+fun read(filename):
+	let f = try! open(filename)
+	let string = try read(f)
+	print(string)
+	ensure: # Executes whether there is an error or not
+		close(f)
+
+## EXAMPLES
+if numerator == denominator == 0:
+	raise DivideByZero()
+
+try process! bigdata:
+	DataCorruptError(msg) => print msg
+ensure: restore! bigdata
+
+let file = try! open('readme.md')
+for line in file:
+	print line
+
+
+type Errors is IncompleteDataError | DataCorruptError
+fun foo() :: () -> Errors! | Int
+
+
+# CONTRACTS
+fun foo(a, b):
+	assert a > b

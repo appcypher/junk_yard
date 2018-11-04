@@ -1,9 +1,10 @@
 # Python
-all(n % d > 0 for d in range(2, n))
-
-all(bool(n mod d) | d in 2..n)
+primes = lambda n: all(n % d > 0 for d in range(2, n))
 
 # Rust
-|n| (2..n).all(|d| n%d > 0)
+let primes = |n| (2..n).all(|d| n%d > 0)
 
-(n) => (2..n).all((i) => bool(i mod d))
+# Astro
+let primes = n => all(i mod d | i in 2..n)
+let primes = n => (2..n).all(_ mod d)
+

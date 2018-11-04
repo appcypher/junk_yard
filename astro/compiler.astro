@@ -1,16 +1,16 @@
 
 # August 14, 2018
 # Reusable Functions vs Specilaized Functions
-Thinking more about, having generic function implementation where any kind of structure can be passed to it by passing pointers to fields just before the call to such function.
-While such function will be efficient, it will also have an assignment overhead for every function call. I think monomorphization is preferable if Astro wants to be a language about
-performance. Yes, monomorphization increases binary size, however in this case, we want to take performance over size.
-You can always avoid monomorphization by not using generic code. I think this is where JIT shines.
+- Thinking more about, having generic function implementation where any kind of structure can be passed to it by passing pointers to fields just before the call to such function.
+- While such function will be efficient, it will also have an assignment overhead for every function call. I think monomorphization is preferable if Astro wants to be a language about
+- performance. Yes, monomorphization increases binary size, however in this case, we want to take performance over size.
+- You can always avoid monomorphization by not using generic code. I think this is where JIT shines.
 
-Functions are resuable in certain. scenarios:
+- Functions are resuable in certain. scenarios:
 - A function that takes a super type can be reused for its subtypes
 - A function can be reused for arguments that have similar structural order and field types
 
-However functions get monomorphized when:
+- However functions get monomorphized when:
 - an argument is a subtype that does not have the same structural order or type as parent
 - the arguments are value types
 
@@ -24,7 +24,7 @@ else:
 
 print(typeof x) # Str | Int
 
-The above code shows an example of type uncertainty, and it can be with resolved union splitting.
+- The above code shows an example of type uncertainty, and it can be with resolved union splitting.
 let foo
 if typeof x == Int:
 	foo = foo_int
@@ -72,13 +72,13 @@ fun bar(s):
     #   free stuff
 
 # Strict Mode
-The compiler should have a strict mode that encourages certain well-known engineering methods. These are guidelines the compiler
-enforces. They usually affect prototyping productivity, so they are made available through a flag. Here are some of the rules it enforces:
-* All errors must be handled, re-raised or panicked
-* Functions and types must be annotated with types
-* Prevents type uncertainty
+- The compiler should have a strict mode that encourages certain well-known engineering methods. These are guidelines the compiler
+- enforces. They usually affect prototyping productivity, so they are made available through a flag. Here are some of the rules it enforces:
+- * All errors must be handled, re-raised or panicked
+- * Functions and types must be annotated with types
+- * Prevents type uncertainty
 
-Some of the rules may disabled to suit the teams workflow.
-Along with these, the mode can be hooked with a linter that follows certain guidelines.
+- Some of the rules may disabled to suit the teams workflow.
+- Along with these, the mode can be hooked with a linter that follows certain guidelines.
 
 #

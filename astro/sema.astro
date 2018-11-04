@@ -19,22 +19,22 @@ foo :: B, B -> B # Specific functions are always generated
 # operatorchar+: =>, ->, .., ..., ::, >:, <:,
 
 # The Cycle Problem
-Astro does not have the need for forward declaration because it all referenced types are included before their use and this means
-Astro has to deal with cyclic inclusion/dependency problem.
+- Astro does not have the need for forward declaration because it all referenced types are included before their use and this means
+- Astro has to deal with cyclic inclusion/dependency problem.
 
-There are three main cyclic inclusions in Astro
-* Reference Cycle
-* Call Cycle
-* Construction Cycle
+- There are three main cyclic inclusions in Astro
+- * Reference Cycle
+- * Call Cycle
+- * Construction Cycle
 
-Reference cycle is effectively handled by Astro's deallocation scheme.
-Call cycle appears to be a reasonable property although a warning should probably be given when a recursive call has no an escape hatch (base condtion).
-Construction cycles, on the other hand, need to be prevented whether there is a base condition or not.
+- Reference cycle is effectively handled by Astro's deallocation scheme.
+- Call cycle appears to be a reasonable property although a warning should probably be given when a recursive call has no an escape hatch (base condtion).
+- Construction cycles, on the other hand, need to be prevented whether there is a base condition or not.
 
 # Construction Cycle TODO: To be continued
 fun A() = { b: B() }
 fun B() = { a: A() }
-For each type constructor, the sema phase check for construction cycle.
+- For each type constructor, the sema phase check for construction cycle.
 fun A(a) = { a }
 fun A() = A(1)
 
