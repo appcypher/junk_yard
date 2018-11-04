@@ -1,4 +1,3 @@
-WASMER PITCH
 - Compile Once, Run Anywhere.
     - Same module runs on any server-side engine or browser.
     - You can simply package up your code and ship it to any client as is. No more CPU/OS combinatorial compilation.
