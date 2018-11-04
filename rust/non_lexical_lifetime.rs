@@ -10,8 +10,7 @@ fn without_nll() {
     let mut vector_data = vec![1, 2, 3, 4]; // vector stack data --- points to --> heap
 
     // Non-lexical lifetime (NLL) could have helped here.
-    {
-        // This scopes are there to restrict the lifetimes so they don't overlap
+    { // This scopes are there to restrict the lifetimes so they don't overlap
         let refr = &mut vector_data;
         resize(refr, 100); // heap data reallocated, pointer to heap updated
     }
@@ -24,7 +23,7 @@ fn without_nll() {
         change_index_value(refr); // nothing reallocated
     }
 
-    println!("vector_data = {:?}", vector_data); // vector stack data --- still pointing to --> heap (diff address)
+    println!("vector_data = {:?}", vector_data);  // vector stack data --- still pointing to --> heap (diff address)
 }
 
 fn with_nll() {
@@ -45,6 +44,7 @@ fn with_nll() {
     let refr3 = &mut vector_data[1];
     change_index_value(refr3); // lifetime 'refr3 ends here
 
+
     // println!("vector_data = {:?}", refr2); // lifetime 'refr2 cannot continue here because it's _the borrower_
     println!("vector_data = {:?}", vector_data); // but lifetime 'vector_data can continue here because it's _the owner_
 }
@@ -52,6 +52,7 @@ fn with_nll() {
 fn change_index_value(n: &mut usize) {
     *n += 1;
 }
+
 
 fn resize(v: &mut Vec<usize>, n: usize) {
     v.resize(n, 0);
