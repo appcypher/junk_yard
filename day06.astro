@@ -1,0 +1,23 @@
+#!/usr/bin/env astro
+
+let input = lines readfile './inputs/06 - Signals and Noise.txt'
+var most_common = ''
+var least_common = ''
+var columns = @expand(7) ['']
+
+fun letter_count(column):
+	let result = []
+	for ch in set column:
+		result.push!((column.count(ch), ch))
+	sort! result
+
+for line in input: for i, c in enumerate line:
+	columns[i].push! c
+
+for col in columns:
+	let lc = col.letter_count()
+	most_common.push! lc[end][1]
+	least_common.push! lc[0][1]
+
+print('The most common characters are: \t', most_common)
+print('The least common characters are: \t', least_common)

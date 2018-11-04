@@ -1,0 +1,49 @@
+<html>
+<head>
+</head>
+<body>
+    <div id="result">0</div>
+</body>
+<script>
+    let exports;
+    let instance;
+    const start = async () => {
+        const bytes = await (await fetch("add.wasm")).arrayBuffer();
+
+
+        const memory = new WebAssembly.Memory({ initial: 1 });
+
+        const consoleLogString = (offset, length) => {
+            // const memory = (instance && instance.exports.mem) || memory;
+            // console.log(memory.buffer);
+            var bytes = new Uint8Array(memory.buffer, offset, length);
+            var string = new TextDecoder('utf8').decode(bytes);
+            console.log(string);
+        }
+
+        const importObject = {
+            console: { log: (x) => console.log(x) },
+            imports: { log: consoleLogString },
+            js: { glob: 50, mem: memory }
+        };
+
+        instance = (await WebAssembly.instantiate(bytes, importObject)).instance;
+
+        ((offset, length) => {
+            var bytes = new Uint8Array(instance.exports.mem.buffer, offset, length);
+            var string = new TextDecoder('utf8').decode(bytes);
+            console.log(string);
+        })();
+
+        console.log(instance);
+        const { func } = instance.exports;
+        console.log(func(10));
+    };
+
+    window.onload = () =>  start();
+
+</script>
+</html>
+
+
+

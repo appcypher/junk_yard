@@ -1,0 +1,76 @@
+#!/usr/bin/env astro
+
+# ------------- #
+
+fun main():
+	let s = {}
+	let t = {}
+	let u = {}
+	qux(t)
+	bar(s)
+	bar(u)
+	#=====#
+	release(*t)
+
+# ------------- #
+
+fun bar(s):
+	foo(s)
+	foo(s)
+	#=====#
+	free(s)
+
+fun foo(s): # final
+	print(s)
+
+# ------------- #
+
+fun qux(t): # final
+	print(t)
+
+# ------------- #
+
+fun baz(u):
+	let u = doo(u)
+	cop(u)
+	#=====#
+	free(u)
+
+fun doo(u):
+	print u
+	return u
+
+fun cop(u): # final
+	print(u)
+
+# ------------- #
+# Since deallocation is known at compile-time data is stored in RODATA
+
+000000 null_free_ptr
+344043 free_ptr -> (bytes) [len] [arg_pos] ...[arg_pos]
+
+if free_ptr:
+	free(free_ptr, ...__args__)
+free_ptr += 1
+
+
+fun free(free_ptr, ...args):
+	for i in *free_ptr:
+		release args[i]
+
+# after every potential, the pointer is incremented
+
+
+# ------------- #
+- free is called on foreign objects that are last ref'd by a final function
+- or do not escape the current scope.
+- release is called on local objects that do not escape the current scope.
+- final function is a function that last accesses an object
+
+#--- DETAILS ---#
+- free for freeing foreign objects (after final functions, at the end of a scope)
+- release for freeing local objects
+
+#--- OPTIMIZATIONS ---#
+- in cases where a function is consistently used in a way where it releases an object
+- it is specilaized to do just that.

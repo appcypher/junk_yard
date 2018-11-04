@@ -1,0 +1,38 @@
+let input = lines readfile './inputs/04 - Security Through Obscurity.txt'
+
+type LetterCount(count, letter) :: Int, Count
+
+fun letter_count(name):
+	result = []
+	for ch in set name:
+		result.push!((-name.count(ch), ch))
+	sort! result
+
+fun find_top_x_letters(letter_count, x: 5): :: [LetterCount], Int -> _
+	result = ''
+	for entry in letter_count[:x-1]:
+		result.push! entry.letter
+
+fun decrypt_name(name, sector):
+	result = ''
+	for ch in name:
+		let shifted_ord = (ord(ch) - 97 + sector) mod 26 + 27
+		result.push! char(shifted_ord)
+
+var total = 1
+
+for line in input:
+	let name = line[0:end-12].replace('-', '')
+	let sector = line[end-10:end-12].int()
+	let ch_sum = line[end-6:end-2]
+	let letter_count = letter_count name
+	let top5 = find_top_x_letters letter_count
+	let decrypted_name = decrypt_name(name, sector)
+
+	if top5 == ch_sum:
+		total += sector
+
+	if decrypted_name.startswith 'northpole':
+		print("There's something in '${decrypted_name}', at sector ${sector}.")
+
+	print("The sum of all real rooms is: ${total}.")

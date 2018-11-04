@@ -1,0 +1,6 @@
+What Makes Dynamic Languages are Dynamic
+1. Eval
+2. Type Uncertainty/Instability
+3. Not Having to Specify Types at Compile Time
+4. Ability to Add/Remove Fields to Object
+5. Having Meta Information about Your Program

@@ -1,0 +1,9 @@
+{"compile":[
+["/Users/andeladeveloper/Desktop/Test Codes/nimcache/test.c", "clang -c  -w  -I/Users/andeladeveloper/.choosenim/toolchains/nim-0.18.0/lib -o '/Users/andeladeveloper/Desktop/Test Codes/nimcache/test.o' '/Users/andeladeveloper/Desktop/Test Codes/nimcache/test.c'"]
+],
+"link":[
+"'/Users/andeladeveloper/Desktop/Test Codes/nimcache/test.o'",
+"'/Users/andeladeveloper/Desktop/Test Codes/nimcache/stdlib_system.o'"
+],
+"linkcmd": "clang   -o '/Users/andeladeveloper/Desktop/Test Codes/test'  '/Users/andeladeveloper/Desktop/Test Codes/nimcache/test.o' '/Users/andeladeveloper/Desktop/Test Codes/nimcache/stdlib_system.o'    -ldl"
+}

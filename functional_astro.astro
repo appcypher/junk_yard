@@ -1,0 +1,135 @@
+#!/usr/bin/env astro
+
+# F#
+type A = B * C # Product type
+type A = B + C # Sum type
+
+type PaymentMethod =
+    | Cash
+    | Cheque of ChequeNumber
+    | Card of CardType * CardNumber
+
+let printPaymentMethod method =
+    match method with
+    | Cash -> printfn 'Paid in cash'
+    | Cheque checkNo -> printfn 'Paid by cheque %i' checkNo
+    | Card cardType, cardNo -> printfn 'Paid by with %A %A' cardType cardNo
+
+# Astro
+type A = (B, C) # Tuple
+type A = B | C # Union
+
+type PaymentMethod =
+    | Cash
+    | Cheque(checkno)
+    | Card(cardtype, cardno)
+
+fun print_payment_method(method):
+    | Cash => print "Paid in cash"
+    | { checkno } :: Cheque => print "paid by cheque ${checkno}"
+    | { cardtype, cardtype } :: Card => print "Paid with ${cardno} ${cardtype}"
+
+type PaymentMethod is (Cash, Cheque, Card) # Tuple
+type PaymentMethod is Cash | Cheque | Card # Union
+type PaymentMethod is Cash & Cheque & Card # Intersection
+
+type PaymentMethod = var name, age
+type PaymentMethod = Cash() | Cheque() | Card()
+
+@struct
+type Person = var name, age
+
+@distinct
+type Age is Int # Age is a distinct type
+
+@bitstype(Int64)
+type Person(number)
+
+@abstract
+type Person(name, age)
+
+# GENERIC TYPE NAME
+# Where there is no single alphabet left to represent a generic type name
+foo :: List{A`} -> A`
+
+# Functional Patterns in Astro
+# Currying
+foo :: a -> b -> c
+b |> foo a
+foo :: (a, b) -> c
+b |> foo(a, _)
+b |> foo(_, a)
+
+# Sum type
+data Pet = Dog | Cat
+type Pet = Dog | Cat
+
+# Product Type
+type Pet = Pet Name * Age
+type Pet is (Name, Age)
+
+# Intersection Type
+type Pet is Name & Age
+
+# Kinds - a type that takes another type as argument
+data Maybe a
+List{A}
+[1, 2, 3] :: List{Int}
+['a', 'b'] :: List{Str}
+
+# Higher Kinded Types - a generic kind.
+class Functor f
+F{A}
+List{A} :: F{A}
+Array{A} :: F{A}
+
+# Functors - pattern that applies function to the contents of a data structure
+map :: Functor f => (a -> b) -> f a -> f b
+(A -> B), F{A} -> F{B}
+
+# Applicatives - pattern that applies a structure of function to the contents of a similar structure
+apply :: Applicative f => f (a -> b) -> f a -> f b
+F{(A -> B)}, F{A} -> F{B}
+
+# Monads -
+bind :: Monad f => (a -> f b) -> f a -> f b
+(A -> F{B}), F{A} -> F{B}
+
+# Rust, Haskell, Astro
+class Functor f where
+    fmap :: (a -> b) -> f a -> f b
+
+trait Functor<T> {
+    fn fmap<F, U>(Self<T>, f: F) -> Self<U>
+         where F: Fn(T) -> U;
+}
+
+fun show(x): #: Int -> None
+    print "x = ${x}"
+
+
+# Algebraic Effects
+type Error() #: {T}
+
+type DivByZeroError() <: Error #: {T}
+
+fun safediv(n, d): #: DivByZeroError | Int
+    if n == 0:
+        return DivByZeroError()
+    else:
+        return n / d
+
+fun test(): #: DivByZeroError | None
+    let y = !safediv(1, 0) # returns at this point if DivByZeroError
+
+fun test():
+    let y = if let d = safediv(1, 0):
+
+
+
+
+
+# A catch handler that is not really needed, normal catch should do
+fun catch(a): #: ((...A) -> Error{B}) -> Maybe{B}
+    | DivByZeroError => nil
+    | A => a

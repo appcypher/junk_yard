@@ -1,0 +1,319 @@
+# June 15, 2018
+type Parser(tokens) =
+    # Lexed tokens list
+    var tokens
+    var token_position = -1
+
+    # Parser state information.
+    var line = 1
+    var column = 1
+    var last_indent_count = 0
+    var last_parse_data = nil
+    var ignore_newline = false
+
+    # Cache.
+    var cache = {}
+
+fun revert(parser, token_position, last_indent_count, column, line, ignore_newline):
+    parser = {
+        ...parser,
+        token_position,
+        last_indent_count,
+        column,
+        line,
+        ignore_newline
+    };
+
+fun last_reached(parser):
+    if parser.token_position + 1 > parser.tokens.length:
+        return true
+    return false
+
+fun update_state(parser, skip: 1):
+    if skip > 0:
+        parser = {
+            ...parser,
+            token_position: token_position + skip,
+            column: parser.tokens[parser.token_position].stop_column
+            line: parser.tokens[parser.token_position].stop_line
+        };
+
+fun eat_token(parser, str):
+    let { token_position } = parser
+    let result = { success: false, token: nil };
+    if not parser.last_reached() and parser.tokens[token_position + 1].token == str:
+        parser.update_state()
+    return result
+
+fun eat_token_start(parser, str):
+    let { token_position } = parser
+    let result = { success: false, token: nil };
+    if not parser.last_reached() and parser.tokens[token_position + 1].token.starts_with str:
+        parser.update_state()
+    return result
+
+fun cache_rule(parser, kind, token_position, result, is_directive?):
+    if not parser.cache[token_position]:
+        parser.cache[token_position] = {}
+        parser.cache[token_position][kind] = {
+            success: result.success,
+            ast: result.ast,
+            skip: parser.token_position - token_position
+        }
+
+        if is_directive:
+            parser.cache[token_position][kind].directive = true
+
+    elif not parser.cache[token_position][kind]:
+        parser.cache[token_position][kind] = {
+            success: result.success,
+            ast: result.ast,
+            skip: parser.token_position - token_position
+        }
+        if is_directive:
+            parser.cache[token_position][kind] = true
+
+fun parse_terminal_rule(parser, kind):
+    let { token_position } = parser
+    let result = { success: false, ast: { kind } }
+
+    if not parser.last_reached() and parser.tokens[token_position + 1].kind == kind:
+        result = { success: true, ast: { kind, value: parser.tokens[token_position + 1].token } }
+        parser.update_state()
+
+    parser.cache_rule(kind, token_position, result)
+
+    return result
+
+# ASTRO SPECIAL
+fun parse(...args) = parser =>
+    let {
+      token_position, last_indent_count, column, line, ignore_newline
+    } = parser
+
+    let result = { success: true, ast: [] }
+
+    for arg in args:
+        | {} :: Function =>
+            let arg_name = arg.name
+            if let parse_result = parser.cache[parser.token_position][arg_name]:
+                if not parse_result.success:
+                    result.success = false
+                    break
+                else:
+                    if not parse_result.directive:
+                        result.ast.push! parse_result.ast
+                    parser.update_state(parser.cache[parser.token_position][arg_name].skip)
+            else:
+                let parse_result = arg(parser)
+
+                if not parse_result.success:
+                    result.success = false
+                    break
+                elif not parse_result.directive:
+                    result.ast.push! parse_result.ast
+
+        | {} :: String =>
+            let parse_result
+
+            if arg[1] == '§':
+                parse_result = parser.eat_token_start arg[2:]
+            else:
+                parse_result = parser.eat_token arg
+
+            if not parse_result.success:
+                result.success = false
+                break
+            else:
+                result.ast.push! parse_result.token
+
+        | _ =>
+            raise Error('Got the wrong argument type')
+
+    parser.last_parse_data = result
+
+    if not result.success:
+        parser.revert(token_position, last_indent_count, column, line, ignore_newline)
+
+    return result
+
+fun alt(...args) = parser =>
+    let {
+      token_position, last_indent_count, column, line, ignore_newline
+    } = parser
+
+    let result = { success: true, ast: { alternative: 0, ast: {} } }
+
+    for i, arg in args:
+        | {} :: Function =>
+            let arg_name = arg.name
+            if let parse_result = parser.cache[parser.token_position][arg_name]:
+                if parse_result.success:
+                    parser.update_state(parser.cache[parser.token_position][arg_name].skip)
+                    result.success = true
+                    result.alternative = i
+
+                    if not parse_result.directive:
+                        result.{ ast } = parse_result
+
+                    break
+            else:
+                let parse_result = arg(parser)
+
+                if parse_result.success:
+                    result.success = true
+                    result.alternative = i
+
+                    if not parse_result.directive:
+                        result.ast.{ ast } = parse_result
+
+                    break
+
+        | {} :: String =>
+            let parse_result
+
+            if arg[0] === '§':
+                parse_result = parser.eat_token_start arg[2:]
+            else:
+                parse_result = parser.eat_token arg
+
+            if parse_result.success:
+                result.success = true
+                result.ast.alternative = i
+                result.ast.ast = parse_result.token
+                break
+
+        | _ =>
+            raise Error('Got the wrong argument type')
+
+    parser.last_parse_data = result
+
+    if not result.success:
+        parser.revert(token_position, last_indent_count, column, line, ignore_newline)
+
+    return result
+
+fun more(...args) = parser =>
+    let result = { success: true, ast: [] }
+    loop:
+        let parse_result = parse(...arg)(parser)
+        if not parse_result.directive:
+            break
+        else:
+            result.success = true
+            if not parse_result.directive:
+                if parse_result.ast.length == 1 and typeof parse_result.ast[1] == String:
+                    result.ast.push parse_result.ast[0]
+                else:
+                    result.st.push parse_result.ast
+            ..
+    ..
+    parser.last_parse_data = result
+    return result
+
+fun optmore(...arg) = parser => { success: true, ast: more(...arg)(parser).ast }
+
+fun opt(...arg) = parser => { success: true, ast: more(...arg)(parser).ast }
+
+fun peek_and(...arg) = parser =>
+    let {
+      token_position, last_indent_count, column, line, ignore_newline
+    } = parser
+
+    let parse_result = {
+        success: parse(...arg)(parser).success,
+        directive: true,
+    }
+
+    parser.revert(token_position, last_indent_count, column, line, ignore_newline)
+
+    return parse_result
+
+fun peek_not(...arg) = parser =>
+    let {
+      token_position, last_indent_count, column, line, ignore_newline
+    } = parser
+
+    let parse_result = {
+        success: not parse(...arg)(parser).success,
+        directive: true,
+    }
+
+    parser.revert(token_position, last_indent_count, column, line, ignore_newline)
+
+    return parse_result
+
+fun eoi(parser):
+    let {
+      token_position, last_indent_count, column, line, ignore_newline
+    } = parser
+
+    let parse_result = {
+        success: parser.last_reached(),
+        directive: true,
+    }
+
+    parser.revert(token_position, last_indent_count, column, line, ignore_newline)
+
+    return parse_result
+
+# ASTRO LEX
+fun newline(parser) = parse_terminal_rule(parser, 'newline')
+
+fun identifier(parser) = parse_terminal_rule(parser, 'identifier')
+
+fun operator(parser) = parse_terminal_rule(parser, 'operator')
+
+fun punctuator(parser) = parse_terminal_rule(parser, 'punctuator')
+
+fun integerbinaryliteral(parser) = parse_terminal_rule(parser, 'integerbinaryliteral')
+
+fun integeroctalliteral(parser) = parse_terminal_rule(parser, 'integeroctalliteral')
+
+fun integerhexadecimalliteral(parser) = parse_terminal_rule(parser, 'integerhexadecimalliteral')
+
+fun integerdecimalliteral(parser) = parse_terminal_rule(parser, 'integerdecimalliteral')
+
+fun floatbinaryliteral(parser) = parse_terminal_rule(parser, 'floatbinaryliteral')
+
+fun floatoctalliteral(parser) = parse_terminal_rule(parser, 'floatoctalliteral')
+
+fun floathexadecimalliteral(parser) = parse_terminal_rule(parser, 'floathexadecimalliteral')
+
+fun floatdecimalliteral(parser) = parse_terminal_rule(parser, 'floatdecimalliteral')
+
+fun floatliteralnomantissa(parser) = parse_terminal_rule(parser, 'floatLiteralnomantissa')
+
+fun singlelinestringliteral(parser) = parse_terminal_rule(parser, 'singlelinestringliteral')
+
+fun multilinestringliteral(parser) = parse_terminal_rule(parser, 'multilinestringliteral')
+
+fun regexliteral(parser) = parse_terminal_rule(parser, 'regexliteral')
+
+fun singlelinecomment(parser) = parse_terminal_rule(parser, 'singlelinecomment')
+
+fun multilinecomment(parser) = parse_terminal_rule(parser, 'multilinecomment')
+
+# ASTRO PARSE
+fun integerliteral(parser):
+  let { token_position } = parser
+  let kind = 'integerliteral'
+  let result = { success: false, ast: { kind } }
+
+  let parse_result = alt(
+    integerbinaryliteral,
+    integeroctalliteral,
+    integerhexadecimalliteral,
+    integerdecimalliteral,
+  )(parser)
+
+  if parse_result.success:
+    result.{ success } = parse_result
+    result.{ ast } = parse_result.ast
+
+  parser.cache_rule(kind, token_position, result)
+
+  return result
+
+let parser = Parser tokens
+parser.parse(identifier, 'name', newline)

@@ -1,0 +1,13 @@
+```
+map = new Map(
+    ['name', 'James'],
+    ['age', 45],
+    ['gender', 'male']
+)
+
+map.get('name') # 'James'
+map.put('job', 'Gardener')
+map.size() # 4
+map.keys() # ['name', 'age', 'gender', 'job']
+map.values() # ['James', 45, 'male', 'Gardener']
+```

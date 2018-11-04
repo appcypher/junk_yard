@@ -1,0 +1,265 @@
+#!/usr/bin/env astro
+
+# July 10 2018
+let x = match y:
+    | { a, b } => a + b
+    | (a, b) => a + b
+
+fun foo(a): match a:
+    | { a, b } => a + b
+    | (a, b) => a + b
+
+fun foo(a): match a:
+    | { a, b } => a + b
+    | (a, b) => a + b
+
+fun foo():
+    if x == y: bar x
+    match a:
+        | n => n²
+        | _ => print 'hello'
+    print 'hi'
+    return 500
+
+# June 24, 2018
+let x = {
+    mom:
+        name: 'Jessica'
+        age: 53
+    dad:
+        name:
+}
+
+# June 23, 2018
+print #= =# name
+print #=
+This is something interesting
+=# name
+
+# June 22, 2018
+# Assignment Pattern
+x, y = 4, 5
+x[1], y[2] = 4, 5
+a.name, b.name = 5, 6
+a.name, :age, :gender = 5, 6
+age[2], :[3], :[4] = 1, 2, 3
+x = y = 4
+{ x, y } = obj
+[x, y] = arr
+(x, y) = tup
+{ x, y }.name = obj
+a.{ x, y } = obj
+a.{ x, y }.name = obj
+
+
+print(hello), :(cruel), :(world)
+arr[1], :[2], :[3]
+print(person.name, :age, :gender)
+person.name, :age, :gender = 'John', 20, 35
+
+
+
+a.name, \age, \stage = 2, 3, 4
+print(name), \(age), \(hello)
+age[2], \[3], \[4]
+
+
+# Others
+let x, y = 4, 5
+let a b c = 45
+
+
+# June 18, 2018
+let dim_unpack = (a, b) => [|a, |b]
+let flat_unpack = (a, b) => [...a, ...b]
+
+# June 16, 2018
+# Using
+fun reshape(arr, ...dimen): #: Array{T}, ...Int -> Array{T}
+    # If arr length does not equal product of dimen
+    if length arr != prod dimen:
+        raise DomainError('Trouble in form six!')
+    ..
+    let arr2 = Array{arr.T}(...dimen)
+    var dimen2 = val dimen
+    let pointer = 1
+    loop:
+        dimen2[pointer] -= 1
+        arr2[pointer] = arr[pointer]
+        if pointer > 0: # Not pointing to the begining of dimen2
+            if dimen2[pointer - 1] > 0: # if dimen2 has value greater than zero
+                pointer -= 1 # Point to prev rank
+            else:
+                pointer += 1 # Point to the next rank
+        ..
+    ..
+    return arr2
+
+# Using C-based implementation
+fun reshape(a, ...dims): #: Array{T}, ...Int -> Array{T}
+    if prod dims != length a:
+        raise DomainError ''
+    if dims == dimen a:
+        return a
+    @ccall(astro_reshape_array, a, ...dims) (Array{T}, ...Int) -> Array{T}
+
+# JULIA (It relies on a C-based implementation)
+# reshaping to same # of dimensions
+function reshape(a::Array{T,N}, dims::NTuple{N,Int}) where T where N
+    if prod(dims) != length(a)
+        _throw_dmrsa(dims, length(a))
+    end
+    if dims == size(a)
+        return a
+    end
+    ccall(:jl_reshape_array, Array{T,N}, (Any, Any, Any), Array{T,N}, a, dims)
+end
+
+# reshaping to different # of dimensions
+function reshape(a::Array{T}, dims::NTuple{N,Int}) where T where N
+    if prod(dims) != length(a)
+        _throw_dmrsa(dims, length(a))
+    end
+    ccall(:jl_reshape_array, Array{T,N}, (Any, Any, Any), Array{T,N}, a, dims)
+end
+
+
+#: (T, U) -> Bool where |T, U| <: Sequence
+fun any_common_elements(l, r):
+    for x in l, y in r where x == y:
+        return true
+    false
+
+#: (T, U) -> Bool where |T, U| <: Sequence
+fun any_common_elements(l, r) = check((x, y | x in l, y in r), ((x, y)) => x == y)
+
+
+# 9 June, 2018
+let lambda = (x, y) => print x
+let lambda = () => print y
+
+# 1 June, 2018
+var set_a = set.(1, 2, 3, 4)
+var dict_a = {
+    'hello': 1,
+    'hi': 2,
+}
+
+var gen = (i | i in list)
+var list = [ i | i in list]
+var set = set(i | i in list)
+var dict = dict((x, y) | (x, y) in dict)
+
+@raw "Hello mofo"
+
+
+# 31 May, 2018
+# Julia
+using ForwardDiff, BenchmarkTools, ReverseDiff
+
+num_i = 1_000
+choice_set_size = 30
+true_b = randn(20)
+num_moments = 40
+
+X=randn(num_i*choice_set_size,length(true_b))
+Δm_mat = rand(num_i*choice_set_size,num_moments)
+ranges = [colon(1+choice_set_size*(ii-1), choice_set_size*ii) for ii=1:num_i]
+
+function logit_GMM(b,X::Matrix{Float64},Δm_mat::Matrix{Float64},ranges::Vector{UnitRange{Int64}})
+    eu=exp.(X*b)
+    s=similar(eu)
+    @inbounds for rng ∈ ranges
+        @views s[rng] .= eu[rng] ./ sum(eu[rng])
+    end
+    EΔm = (Δm_mat' * s) ./ size(ranges,1)
+    return EΔm' * EΔm
+end
+
+logit_GMM(b) = logit_GMM(b,X::Matrix{Float64},Δm_mat::Matrix{Float64},ranges::Vector{UnitRange{Int64}})
+
+# Astro 0.1.14
+import ForwardDiff, BenchmarkTools, ReverseDiff { ... }
+
+let num_i = 1_000
+let choice_set_size = 30
+let true_b = rand_n(20)
+let num_moments = 40
+
+let X = rand_n(num_i * choice_set_size, length(true_b))
+let Δm_mat = rand(num_i * choice_set_size, num_moments)
+let ranges = [range(1 + choice_set_size * (ii - 1), choice_set_size * ii) | ii in 1..num_i]
+
+fun logit_GMM(b, Δm_mat, ranges): #: Matrix{float64}, Matrix{Float64}, Vector{UnitRange{Int64}}
+    let eu = exp.(X * b)
+    let s = similar eu
+    @in_bounds
+    for rng in ranges
+        @views
+        s[rng] .= eu[rng] ./ sum(eu[rng])
+    let EΔm = (Δm_mat' * s) ./ size(ranges,1)
+    return EΔm' * EΔm
+
+####################
+NIL OPERATORS
+john?.sister?.age
+# ?john.sister.age
+john.sister.age?
+
+john.sister!.age?
+# ?(!john.sister).age
+john.sister!.age?
+
+john.do!()
+# !john.do()
+john.do()!
+
+john.do!(something)!
+
+NEW NIL STUFF
+john.sister.age?
+!john.sister.age
+john.reverse!(2, 3)?
+
+
+COVARIANCE/CONTRAVARIANCE/INVARIANCE/BIVARIANCE
+type Noun
+type City <: Noun
+type SanFrancisco <: City
+
+type BaseType
+type SubType <: SubType
+
+fun method(b, c) #: BaseType, City -> City
+fun method(s, c) #: SubType, City -> City
+fun method(s, f) #: SubType, Noun -> City
+fun method(s, n) #: SubType, SanFrancisco -> City
+
+let b = Array{BaseType}()
+let s = SubType()
+b.push(s)
+
+CASTING
+method(b[2], SanFrancisco())
+method(b[2] as SubType, SanFrancisco())
+
+let y = for i in 8..10: i end: 67
+
+for line in file where //lagbaja// in line:
+    print "name found!"
+    break
+end:
+    print "name not found!"
+
+var not_found = false
+for line in file where //lagbaja// in line:
+    print 'name found'
+    not_found = true
+    break
+
+if not_found:
+    print 'name not found'
+
+
+
+

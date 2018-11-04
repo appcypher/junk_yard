@@ -1,0 +1,9 @@
+# Python
+all(n % d > 0 for d in range(2, n))
+
+all(bool(n mod d) | d in 2..n)
+
+# Rust
+|n| (2..n).all(|d| n%d > 0)
+
+(n) => (2..n).all((i) => bool(i mod d))

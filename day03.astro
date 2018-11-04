@@ -1,0 +1,27 @@
+#!/usr/bin/env astro
+
+let input = lines readfile './inputs/03 - Squares With Three Sides.txt'
+
+var first_col . second_col . third_col = []
+var horizontal_triangles = 0
+var vertical_triangles = 0
+
+fun istriangle(sides):
+	let sl = sides.sort()
+	return sl[0] + sl[1] > sl[2]
+
+for i, candidate in enumerate input:
+	let line = candidate.split().map(int)
+	if line.istriangle():
+		horizontal_triangles += 1
+	first_col[i] = line[0]
+	second_col[i] = line[1]
+	third_col[i] = line[2]
+
+for column in [first_col, second_col, third_col]:
+	let sides = [column[i], column[i+1], column[i+1]]
+	for i in 0..column[end]-2..3 where sides.istriangle():
+		vertical_triangles += 1
+
+print("There are ", horizontal_triangles, " horizontal triangles.")
+print("There are ", vertical_triangles, " vertical triangles.")

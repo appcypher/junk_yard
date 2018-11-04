@@ -1,0 +1,12 @@
+me = new Me
+ls = [1, 2]
+a = [3, 4]
+ls = ls + a
+display me
+display ls
+
+class Me
+	ls = 5
+end
+
+

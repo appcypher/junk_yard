@@ -1,0 +1,58 @@
+typelinecontinuation =
+    | spaces? nextcodeline samedent '::' spaces?
+
+_ =
+    | (linecontinuation | typelinecontinuation) // Which alternative gets called depends on a global value
+    | spaces
+
+comma =
+    | _? ',' _? (nextcodeline samedent)?
+
+typearguments =
+    | typeatom (comma typeatom)* comma?
+
+typesubatom =
+    | identifier (nospace '.' identifier)* (nospace '`')? (nospace ('{' _? typearguments _? '}' | ....))? (nospace '?')? // TODO: dot reference is only relevant to types after the where guard
+    | '[' _? typeatom _? ']'
+    | '(' _? typeatom _? ')'
+
+typetupleargument =
+    | noname
+    | ('.' nospace '.' nospace '.' nospace)? typeatom
+
+typetuple =
+    | '(' _? typetupleargument (comma typetupleargument)+ comma? _? ')'
+    | '(' nextcodeline indent typetupleargument (comma typetupleargument)+ comma?  nextcodeline dedent ')'
+
+typeatom =
+    | typeset
+    | typesubatom
+
+typeset =
+    | typesubatom '|' typesubatom
+    | typesubatom '&' typesubatom
+    | typetuple
+
+functiontypeparameter =
+    | '{' _? identifier (nospace '`')? (comma identifier (nospace '`')?)+ comma? _? '}'
+
+functiontypeinputargument =
+    | typetuple
+    | typetupleargument (comma typetupleargument)*
+
+functiontype =
+    | functiontypeinputargument (nospace '->' nospace | _ '->' _) typeatom
+
+typerelationoperator =
+    | nospace ('::' | '<:' | '>:') nospace
+    | _ ('::' | '<:' | '>:') _
+
+typeguardargument =
+    | typeatom typerelationoperator typeatom
+    | '|' _? typeatom (comma typeatom) comma? _? '|' typerelationoperator typeatom
+
+typeguard =
+    | _ 'where' _ typeguardargument (comma typeguardargument)
+
+typedescription
+    | (functiontype | typeatom) typeguard?

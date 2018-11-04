@@ -1,0 +1,24 @@
+#!/usr/bin/env astro
+
+# Astro 0.1.14
+import ForwardDiff, BenchmarkTools, ReverseDiff { ... }
+
+let num_i = 1_000
+let choice_set_size = 30
+let true_b = rand_n(20)
+let num_moments = 40
+
+let X = rand_n(num_i * choice_set_size, len(true_b))
+let Δm_mat = rand(num_i * choice_set_size, num_moments)
+let ranges = [range(1 + choice_set_size * (ii - 1), choice_set_size * ii) | ii in 1..num_i]
+
+fun logit_GMM(b, Δm_mat, ranges): :: Matrix{float64}, Matrix{Float64}, Vector{UnitRange{Int64}}
+    let eu = exp.(X * b)
+    let s = similar eu
+    @in_bounds
+    for rng in ranges:
+        @views s[rng] .= eu[rng] ./ sum(eu[rng])
+    let EΔm = (Δm_mat' * s) ./ size(ranges,1)
+    return EΔm' * EΔm
+
+fun logit_GMM(b) = logit_GMM(b, X, Δm_mat, ranges)

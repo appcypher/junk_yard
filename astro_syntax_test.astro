@@ -1,0 +1,227 @@
+
+ns.()
+ns.{}
+ns.[]
+ns.""
+ns./hello/
+foo[Hello]()
+foo.$name
+extend
+at
+del
+super
+new
+val
+acq
+spill
+abst
+macro
+src
+no
+unsafe
+defer
+123'f32
+|a, b| => print a + b
+a / b / c
+
+/ b / c
+a /= b
+#= Bam! =# hello
+"hello $:<5(place)"
+"hello $(place)"
+"hello $place"
+
+
+except
+
+0x5667
+0b1001
+0o5577
+
+type Person = var name :: Str; var age :: Int
+destruct(obj) <: {T}(Any) -> None
+
+
+let a = "Hello $name"
+let a = "Hello ${name}"
+let b = 'Hello $|.-2f|{name} world'
+let b = 'Hello $|>2f|{name} world'
+let c = 'hello \t \b name \" name'
+
+foo!.{Int64}(hello)
+foo.(hello)
+foo!.(hello)
+foo!.{hello}(hello)
+foo!(hello)
+
+print "hello"
+print """hello"""
+
+foo.name, :age, :gender
+foo.{ a + b }.name
+
+x._name_ | _name_() | @_name_
+x.name_ | name_() | @name_
+x._name | _name() | @_name
+x.name!.(hello)
+
+x..name
+
+123@f32
+
+(a, b) => a + b
+x => print x
+
+print @dict{x, y}
+print $name
+print { x: y | x in z }
+print [x | y in z]
+print! name
+print `a`
+print! ||pattern||
+
+cost price total = 4_000
+    cost price total += 4_000
+let cost price price = 4_500
+print("hello"); cost price = 5
+var x = y
+
+print(name), :(age), :(game)
+
+#- #- Inner
+-# Outer -# hello
+
+@(label)
+@macro.macro
+
+fallthrough
+
+import math { ... }
+
+type PaymentMethod =
+
+type Name is String
+
+let name =
+    for name in register where `tony` in name:
+        break name
+    else:
+        ""
+
+fun any_common_elements(l, r):
+   for i in l: for j in r where i == j:
+       return true
+   return false
+
+   for i in l: for j in r where i == j:
+   where x = 3
+   if x where x = 3
+   for i in l where x == 3: for j in r where i == j:
+
+for name in james:
+	print
+
+fun print(name):
+    print('Hello ${name}')
+
+let bool = false
+
+let not_a_number = NaN
+
+for i in array where bool:
+    print('Backslate')
+
+print(person)
+
+++('hello')
+-.('world')
+
+# hello
+- Removed typename
+- Added type_annotation
+- Fixed operators
+- String interpolation bars | |
+- Vectorized function call
+- Function call with type argument
+- Mutative function call
+- Remove keywords (extend, at, del, super, new, val, acq, spill, abst, macro, src, no, unsafe)
+- Remove mapped fieldnames
+- Extended notation field access
+- Fix names
+- Fix number literal
+- Remove parens and brackets rules
+- Add lambda
+- Fix comma / commamd notation problem
+- Fix regex
+- Command notation with various argument literal
+- Regex literal
+- Mutiple subject declaration
+- Extended notation function call
+- Multiline comment
+- Fallthrough
+
+
+fun foo(a, b): :: Int, Int -> Int
+    return a + b
+
+let bar = :: Str
+    "Hello"
+
+let bar = "Hello" :: Str
+
+:: Int, Int -> Int
+fun foo(a, b): return a + b
+
+let quz = ("Hello" :: Str, 45 :: Int)
+
+for ||regex|| in string where x
+
+lambda (0, () => name)
+
+let regex = ||character\b\nHello||
+
+foo.meta.name.args
+foo.meta..foo.meto
+foo.meta!.('hello')
+
+foo{hello}(hello)
+foo.(hello)
+foo!.(hello)
+foo!.{hello}(hello)
+foo!(hello)
+
+let file = try! open('readme.txt')
+
+# Remove lambda highlighting
+# Change regex and add escape character
+# Add try! keyword
+# Fix function call
+# Fix type type_annotation
+
+if x > y: x else: y
+
+let charArray = [ `a`, `b`, `c`, `d` ]
+
+let regex = ||3|5|b||
+let empty = ||||
+
+for ||regex|| in name:
+    print "hello"
+
+let y = (x > y) x : y
+let y = if x > y: x else: y
+
+person.age, :name
+print(name), :(greetings)
+:name
+:(greetings)
+
+
+let a = `c`
+let invalid = ``
+let invalid = `ab`
+let regex = ||regex||
+let bool = (x > y) ? x : y
+
+
+"Door $a is ${(doors[a]) ? 'open.' : 'closed.'}"

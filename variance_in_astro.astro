@@ -1,0 +1,44 @@
+# COVARIANCE AND CONTRAVARIANCE
+type Animal
+type Dog <: Animal
+
+# Subjects
+let x :: Animal
+x = Dog() # Not Allowed
+
+
+# Functions
+fun foo(a) :: Animal -> None
+foo(Dog()) # Allowed
+
+fun foo() :: (Animal) -> Animal
+fun foo() :: (Dog) -> Dog
+
+# Containers
+let arr = [Dog(), Cat()] :: [Animal] # Allowed
+
+
+# Return Types
+fun foo() :: (Animal) -> Animal
+fun foo() :: (Dog) -> Dog
+
+
+type A = var a :: Int8
+type B = var a :: Float64
+type C <: A, B = var c :: Int
+
+fun C(a, c):
+	return { c }.A(a)
+
+var arr = [] :: [B]
+arr.push!(C(1, 2))
+
+
+interface A
+interface B
+type C <: A, B:
+	var a :: Int
+	var b :: Str
+
+fun C(a, b):
+	return A(a).B(b)

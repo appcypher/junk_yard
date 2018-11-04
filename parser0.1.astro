@@ -1,0 +1,43 @@
+parser.prev_token_position = 0
+
+fun spreadexpression(parser):
+    let parseresult = parser.parse(
+      nospace, '.', nospace, '.', nospace, '.', nospace, atom
+    )
+
+    let result = { success: false, ast: { kind: @self.name, expression: {} } }
+
+    if parseresult.success:
+        result.success = true
+        result.ast.expression = parseresult.ast[3]
+
+    parser.cache_rule(result)
+
+    return result
+
+fun tupleexpression(parser):
+    let parseresult = parser.alt(
+      (simpleexpression, more(comma, simpleexpression)),
+      simpleexpression
+    )
+
+    let result = { success: false, ast: { kind: @self.name, expression: [] } }
+
+    if parseresult.success:
+        result.success = true
+
+        let { ast } = parseresult.ast
+
+        if parseresult.ast.alternative == 1:
+            result.ast.expressions.push! ast[0]
+
+            for i in ast[1]:
+                result.ast.expressions.push!(i[0])
+        else:
+            result.ast.expression = ast
+
+    parser.cache_rule(result)
+
+    return result
+
+

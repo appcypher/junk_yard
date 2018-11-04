@@ -1,0 +1,122 @@
+#!/usr/bin/env astro
+
+- Hello World
+print 'hello world'
+
+- Simple Functions
+fun sphere_vol(r):
+    return 4 / 3 * pi * r³
+
+fun quadratic(a, sqr_term, b) = (-b + sqr_term) / 2a
+
+fun quadratic(a, b, c):
+    let sqr_term = √(b² - 4a * c)
+    let r1 = quadratic(a, sqr_term, b)
+    let r2 = quadratic(a, -sqr_term, b)
+    r1, r2
+
+let vol = sphere_vol(3)
+
+print('volume = $|.3f|{vol}')
+quad1, quad2 = quadratic2(2., -2., -12.)
+
+print('result 1: ${quad1}')
+print('result 2: ${quad2}')
+
+- Strings Basics
+let s1 = 'The quick brown fox jumps over the lazy α,β,γ'
+print s1
+
+let s1_caps = s1.uppercase()
+let s1_lower = s2.lowercase()
+
+print s[11]
+print s[end-10:end]
+
+let a = 'welcome'
+let b = 'astro'
+print '$a to $b'
+
+print '1 + 2 = ${1+ 2}'
+
+let s2 = 'this' + 'and' + 'that'
+print s2
+
+let s3 = str('this', 'and', 'that')
+print s3
+
+- String: Converting and Formatting
+let e_str1 = '2.718'
+let e = float e_str1
+print 5e
+
+let num_15 = parse(Int, '51')
+print 3num_15
+
+print 'e_str1 == e_str2 ${e_str1 == e_str2}'
+
+- Arrays
+fun printsum(a):
+    print '${summary(a)}: ${repr(a)}'
+
+let a1 = [1, 2, 3]
+printsum a1
+
+let a2  = Int64[]
+printsum a2
+
+let a4 = 1..20
+printsum(a4)
+
+let a5 = [2^i | i in 1..10]
+printsum a5
+
+let a6 = (Array{Int64})[]
+printsum(a6)
+
+a1.push! 4
+printsum a1
+
+push!(a3, 1)
+printsum a1
+
+push!(a6, [1, 2, 3])
+printsum a6
+
+let a7 = repeat(a1, inner:[2], outer:[1])
+printsum a7
+
+let a8 = repeat(collect(4..-1..1), inner:[1], outer:[2])
+printsum a8
+
+- Error Handling
+let a = []
+try:
+    push!(a, 1)
+except Error:
+    printerror err
+print 'continuing after error'
+
+- Dictionaries
+let m1 = { 1: 'one', 2: 'two' }
+printsum a1
+
+a1[3] = 'three'
+printsum a1
+
+let a2 = Dict{Int64, Str}()
+a[0] = 'zero'
+printsum a2
+
+let a3 = { i: str(i) | i in 1..10 }
+printsum a3
+
+print a1.haskey(1)
+print(1 in keys a1)
+
+
+printsum values a1
+
+printtsum collect values a1
+
+

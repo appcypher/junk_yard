@@ -1,0 +1,128 @@
+# July 3, 2018
+# Type Specialization
+type B <: A
+
+fun foo(a, b):
+    do_something(a, b)
+
+fun foo(a, b): :: A, A -> A
+    do_something(a, b)
+
+fun foo(a, b): :: B, B -> B
+    do_something(a, b)
+
+# Generated functions
+foo :: Any, Any -> Any # For untyped functions or functions called with subtypes that have diverged structurally from parent
+foo :: A, A -> A # Specific functions are always generated
+foo :: B, B -> B # Specific functions are always generated
+
+# operatorchar+: =>, ->, .., ..., ::, >:, <:,
+
+# The Cycle Problem
+Astro does not have the need for forward declaration because it all referenced types are included before their use and this means
+Astro has to deal with cyclic inclusion/dependency problem.
+
+There are three main cyclic inclusions in Astro
+* Reference Cycle
+* Call Cycle
+* Construction Cycle
+
+Reference cycle is effectively handled by Astro's deallocation scheme.
+Call cycle appears to be a reasonable property although a warning should probably be given when a recursive call has no an escape hatch (base condtion).
+Construction cycles, on the other hand, need to be prevented whether there is a base condition or not.
+
+# Construction Cycle TODO: To be continued
+fun A() = { b: B() }
+fun B() = { a: A() }
+For each type constructor, the sema phase check for construction cycle.
+fun A(a) = { a }
+fun A() = A(1)
+
+# Synchronous
+fun foo(a, b, heapvars):
+    do_something(a, b)
+    free_locals()
+    free_externals(heapvars) # Can be inlined.
+
+fun main():
+    let x, y = "Hi", Car("Camaro", 2009)
+    let heapvars = stackalloc{(AnyPtr, Type)}(2)
+    heapvars[1] = (anyptr x, typeof x)
+    heapvars[2] = (anyptr y, typeof y)
+    foo(x, y, heapvars) # Release x and y after function call.
+    print("Hello")
+    print("World")
+
+@unsafe
+fun free_externals(heapvars):
+    if heapvars: for p, t in heapvars:
+        destruct(t, p)
+
+# Asynchronous
+fun foo(a, b, concurrent_heapvars):
+    let x, y = "Hi", Car('Camaro', 2009)
+    free_locals()
+    free_externals_concurrent(concurrent_heapvars)
+
+fun free_externals_concurrent(concurrent_heapvars):
+    if concurrent_heapvars: for i, t, c in concurrent_heapvars:
+        @atomic:
+            if c > 0:
+                heapvars[i, 3] -= 1
+            else:
+                destruct(t, i)
+
+fun main():
+    let a, b = "Hi", Car('Camaro', 2009)
+    let concurrent_heapvars = stackalloc{(AnyPtr, Type)}(2)
+    concurrent_heapvars[1] = (anyptr x, typeof x, 0)
+    concurrent_heapvars[2] = (anyptr y, typeof y, 0)
+    async foo(a, b, inc_ref_count(concurrent_heapvars))
+    async foo(a, b, inc_ref_count(concurrent_heapvars))
+    do_something()
+
+# A NEW DEALLOCATION SCHEME
+# This deallocation scheme relies on final functions (will be explained below). With final functions, all that is
+# needed is a metadata on each heap object specifying whether it can be freed or not. A function containing the entire lifetime of an Object
+# can then specify whether such object can be freed by an inner final function call.
+# A final function is a function that doesn't pass at least one of its argument to another function call.
+# A metadata in the object tells whether an object can be freed or not.
+# Synchronous / Asynchronous
+fun baz(x):
+    let y = "Hi"
+    foo(x, y) # Final (x: declined)
+    # should_free tells the next final function it should free x
+    # This only applies if there is a can_free on the object
+    should_free(x)
+    foo(x, y) # Final (x: allowed)
+
+fun bar(x):
+    let y = "Hello"
+    should_free(x)
+    foo(x, y) # Final (x: allowed)
+
+fun foo(x, y): # Final (x)
+    let z = x + y
+    #>>>>>>>>>>
+    free x
+    #<<<<<<<<<<
+    print(z, y)
+
+fun main():
+    let t0 = "000"
+    can_free(t0) # Tells the next non-final function it can free t0
+    bar(t0) # t0 last used here
+    let t1 = "111"
+    can_free(t1)
+    baz(t1) # t1 last used here
+
+# Free Function
+fun free(x): match get_flag(x):
+    @(0): # No Free Flag
+        return
+    @(1): # Can Free Flag
+        return
+    @(2): # Should Free Synchronously Flag
+        free_sync x
+    @(3): # Should Free Asynchronously Flag
+        free_async x

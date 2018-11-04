@@ -1,0 +1,33 @@
+#!/usr/bin/env astro
+
+import crypto { md5 }
+
+let door_id = 'wtnhxymk'
+
+var first_password = ''
+var second_password = []
+var available_position = set(`0`..`7`)
+var i = 0
+
+fun format_hex(n):
+    hex(n)[end].lower().ascii()
+
+while cardinality(available_position) > 0:
+    let s = door_id + str(i)
+    let hash = md5(s)
+
+    if hash[0] == 0 and hash[1] == 0 and hash[2] < 16:
+        let fifth = format_hex(hash[2] mod 16)
+        let sixth = format_hex(hash[3] >> 4)
+
+    if len(firstPassword) < 8:
+        firstPassword.push!(fifth)
+
+    if fifth in availablePositions:
+        second_password[fifth] = sixth
+        available_positions.remove!(fifth)
+    i += 1
+
+
+print "The password for the first door is:  ${first_password}"
+print "The password for the second door is: ${join(second_password)}"

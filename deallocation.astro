@@ -1,0 +1,50 @@
+#!/usr/bin/env astro
+
+# August 22, 2018
+fun main():
+    let s = {}
+    # == _bar = 0x01 ==
+    # mov byte [_bar], 0x01
+    bar(s)
+
+fun bar(s):
+    foo(s)
+    foo(s)
+    # == free s ==
+    #   mov rax, byte [_bar]
+    #   jz label
+    #   ret
+    # label:
+    #   free stuff
+
+fun foo(s):
+    print s
+
+# August 14, 2018
+fun baz(x):
+    let y = "Hi"
+    foo(x, y) # Final (x: declined)
+    # should_free tells the next final function it should free x
+    # This only applies if there is a can_free on the object
+    should_free(x)
+    foo(x, y) # Final (x: allowed)
+
+fun bar(x):
+    let y = "Hello"
+    should_free(x)
+    foo(x, y) # Final (x: allowed)
+
+fun foo(x, y): # Final (x)
+    let z = x + y
+    #>>>>>>>>>>
+    free x
+    #<<<<<<<<<<
+    print(z, y)
+
+fun main():
+    let t0 = "000"
+    can_free(t0) # Tells the next non-final function it can free t0
+    bar(t0) # t0 last used here
+    let t1 = "111"
+    can_free(t1)
+    baz(t1) # t1 last used here

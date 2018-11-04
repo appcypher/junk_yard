@@ -1,0 +1,18 @@
+# August 22, 2018
+- ptr [8 bytes]
+- unicode_length [8 bytes]
+- byte_length [8 bytes]
+- capacity [8 bytes]
+- flag [1 byte]
+
+type String:
+	var ptr :: Ptr{Byte}
+	var unicode_length :: Int64
+	var byte_length :: Int64
+	var capacity :: Int64
+	var flag :: Byte
+
+type String:
+	var ptr :: Ptr{Byte}
+	var unicode_length_and_flag :: Int64
+	var capacity :: Int64
