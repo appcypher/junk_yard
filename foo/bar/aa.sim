@@ -1,9 +1,0 @@
-call "Map.sim"
-a = new A()
-
-class A
-    block A()
-        Console.print(new Map([]))
-    end
-end
-
