@@ -1,0 +1,8 @@
+[package]
+name = "sample"
+version = "0.1.0"
+authors = ["Steve Akinyemi <appcypher@outlook.com>"]
+
+[dependencies]
+cranelift = "0.22.0"
+cranelift-reader = "0.22.0"
