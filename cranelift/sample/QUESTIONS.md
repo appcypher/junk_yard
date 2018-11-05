@@ -1,7 +1,7 @@
 Why do we have -sNaN:0xT?
 
-If NaNs can be represented with -NaN:0xT, where T is the trailing significand bits, the we can represent a signalling NaN with it.
+If NaNs can be represented with -NaN:0xT, where T is the trailing significand bits, then we should be able to represent a signalling NaN with -NaN:0xT.
 
-WHat does -sNaN:0xT offer?
+What does -sNaN:0xT offer?
 
 Check if cranelift verifies when u specify a -sNaN with a qNaN significand
