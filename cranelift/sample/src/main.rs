@@ -9,8 +9,13 @@ fn main() {
     let clif = read_file("src/function.clif");
     // println!("Clif File Content = \n{}", clif);
     match cranelift_reader::parse_functions(clif.as_str()) {
-        Ok(val) =>  println!("functions = {:?}", val),
-        Err(error) => println!("error = {:?}", error)
+        Ok(functions) =>  println!("Functions = {:?}", functions),
+        Err(parser_error) =>
+            println!(
+                "Error at line {:?}: {:?}",
+                parser_error.location.line_number,
+                parser_error.message,
+            )
     }
 }
 
