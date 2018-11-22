@@ -1,8 +1,9 @@
 ### THE PITCH
 #### Compile Once, Run Anywhere.
 - Same module runs on any server-side engine or browser.
+- Because it is emscripten-compatible, it makes it possible for businesses porting legacy to iteratively test on their machine or publish on desktop or deploy to server
 - You can simply package up your code and ship it to any client as is. No more CPU/OS combinatorial compilation.
-- Current examples: libsass, hunspell-asm
+- Examples: figma, sketchup, pspdffkit, soundnation, libsass, hunspell-asm,
 
 #### Secure Sandbox
 - It is secure. A wasm program cannot make buffer overflow exploits, etc.
