@@ -1,0 +1,66 @@
+{
+    "workbench.sideBar.location": "right",
+    "terminal.integrated.shell.osx": "/bin/zsh",
+    "files.autoSave": "afterDelay",
+    "terminal.integrated.shellArgs.osx": ["--login"],
+    "extensions.ignoreRecommendations": true,
+    "editor.minimap.enabled": false,
+    "git.autofetch": true,
+    "workbench.colorTheme": "One Dark Pro",
+    "window.zoomLevel": -2,
+    "files.trimTrailingWhitespace": true,
+    "editor.trimAutoWhitespace": true,
+    "workbench.startupEditor": "newUntitledFile",
+    "git.confirmSync": false,
+    "editor.formatOnSave": true,
+    "files.insertFinalNewline": true,
+    "explorer.confirmDragAndDrop": false,
+    "explorer.confirmDelete": false,
+    "files.associations": {
+        "*.peg": "pegjs",
+        "*.nasm": "asm",
+        "*.grammar": "pegjs"
+    },
+    "powermode.enabled": true,
+    "powermode.presets": "flames",
+    "liveServer.settings.donotShowInfoMsg": true,
+    "editor.fontFamily": "fira code",
+    "editor.fontLigatures": true,
+    "workbench.iconTheme": "eq-material-theme-icons-darker",
+    "clang.executable": "/usr/bin/clang++",
+    "search.location": "sidebar",
+    "[javascript]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "editor.autoIndent": true
+    },
+    "[astro]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
+        "editor.autoIndent": true
+    },
+    "[wasm]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
+        "editor.autoIndent": true
+    },
+    "extensions.autoUpdate": false,
+    "terminal.integrated.scrollback": 5000,
+    "materialTheme.fixIconsRunning": false,
+    "clang.cxxflags": [
+        "-std=c++14"
+    ],
+    "python.autoComplete.showAdvancedMembers": true,
+    "python.formatting.provider": "yapf",
+    "python.linting.pep8Enabled": true,
+    "editor.fontSize": 14,
+    "C_Cpp.default.cppStandard": "c++14",
+    "C_Cpp.default.cStandard": "c99",
+    "editor.wordWrapColumn": 100,
+    "C_Cpp.clang_format_style": "{ BasedOnStyle: LLVM, IndentWidth: 4 }",
+    "C_Cpp.default.intelliSenseMode": "clang-x64",
+    "liveServer.settings.donotVerifyTags": true,
+    "terminal.integrated.fontFamily": "monospace",
+    "terminal.integrated.fontSize": 14,
+    "gitlens.mode.active": "zen",
+}
