@@ -1,1 +1,8 @@
 .vscode/
+
+**/*.out
+
+c/*.wasm
+c/*.wat
+c/*.js
+
