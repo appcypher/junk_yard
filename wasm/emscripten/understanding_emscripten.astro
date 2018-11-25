@@ -1,0 +1,97 @@
+# Let it be known that these may not be constants even though they are in shouting case
+
+# GLOBAL SECTION
+var staticSealed = false
+let GLOBAL_BASE = 1024
+var STATIC_BASE = GLOBAL_BASE
+var STATICTOP = STATIC_BASE + 5536
+
+# STACK
+var TOTAL_STACK = 5242880 # Or passed as argument
+var STACK_BASE: STACKTOP = alignMemory(STATICTOP)
+var STACK_MAX = STACK_BASE + TOTAL_STACK
+
+# HEAP
+let TOTAL_MEMORY = 16777216 # Or passed as argument
+var DYNAMIC_BASE = alignMemory(STACK_MAX)
+var DYNAMICTOP_PTR = staticAlloc(4)
+
+# ISSUE
+# I have issues with these variables. You will notice these variables are just
+# there to help emscripten emulate behaviors that are already handled natively.
+# For wasm targets it would be nice if it made them an api as well.
+# Update: I noticed these are really not used in some complex apps.
+let _stdin = STATICTOP + x_offset #
+let _stdout = STATICTOP + y_offset #
+let _stderr = STATICTOP + z_offset #
+
+fun alignMemory(size, factor?) = # round up to factor
+    if !factor: ceil(size / factor) * factor
+
+fun staticAlloc(size) =
+    @assert(!staticSealed)
+    var ret = STATICTOP
+    STATICTOP = (STATICTOP + size + 15) & -16
+    @assert(STATICTOP < TOTAL_MEMORY, 'not enough memory for static allocation - increase TOTAL_MEMORY')
+    return ret;
+
+
+# tableBase
+# DYNAMICTOP_PTR
+# STACKTOP
+
+fun ___setErrNo(value) =
+    if Module['___errno_location']:
+        HEAP32[(Module['___errno_location']() >> 2)] = value
+    else:
+        err('failed to set errno from JS')
+    return value
+
+fun socketcall =
+    1 = socket (domain, ty, protocol)
+    2 = bind (socket, addr, port) ?
+    3 = connect (socket, addr, port) ?
+    4 = listen (socket, backlog)
+    5 = accept (socket, addr, addrlen)
+    6 = getsockname (socket, addr, addrlen)
+    7 = getpeername (socket, addr, addrlen)
+    11 = sendto (socket, message, length, flags, dest)
+    12 = recvfrom (socket, buf, length, flags, addr, addrlen)
+    14 = setsockopt (return -ERRNO_CODES.ENOPROTOOPT)
+    15 = getsockopt (socket, level, optname, optval, optlen)
+    16 = sendmsg (socket, message, flags)
+    17 = recvmsg (socket, message, flags)
+
+
+
+
+
+
+
+
+# Emscripten runtime data
+# TODO: Find a better implementation. Use global values.
+let static_sealed = false;
+let global_base = 1024;
+let static_base = global_base;
+let mut static_top = static_base + 5536;
+let total_stack = 5242880;
+let stack_base = align_memory(static_top, 16);
+let stack_top = stack_base;
+let stack_max = stack_base + total_stack;
+let dynamic_base = align_memory(stack_max, 16);
+let dynamictop_ptr = static_alloc(4, &mut static_top, &memories[0]);
+
+
+let emscripten_data = EmscriptenData {
+    static_sealed,
+    global_base,
+    static_base,
+    static_top,
+    total_stack,
+    stack_base,
+    stack_top,
+    stack_max,
+    dynamic_base,
+    dynamictop_ptr,
+};

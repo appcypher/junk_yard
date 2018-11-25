@@ -1,0 +1,42 @@
+> ioctl(fd: u32, request: u64, ...) -> c_int (❗️ 🔥 📥)
+    // http://man7.org/linux/man-pages/man2/ioctl.2.html
+
+> uname(buf: *mut utsname) -> c_int (❗️ 📝)
+    // http://man7.org/linux/man-pages/man2/uname.2.html
+    //
+    LINUX/MACOS =
+        struct utsname {
+            char sysname[];    /* Operating system name (e.g., "Linux") */
+            char nodename[];   /* Name within "some implementation-defined
+                                    network" */
+            char release[];    /* Operating system release (e.g., "2.6.28") */
+            char version[];    /* Operating system version */
+            char machine[];    /* Hardware identifier */
+        #ifdef _GNU_SOURCE
+            char domainname[]; /* NIS or YP domain name */
+        #endif
+        };
+
+> exit (status: c_int)
+
+LEVEL UP ON LOW_LEVEL SOCKET
+> sys_socketcall (call: c_int, cmd: c_long, ...) -> c_int
+    > socket (domain: c_int, ty: c_int, protocol: c_int) -> c_int
+    > bind (socket: c_int, address: *const sockaddr, address_len: socklen_t) -> c_int
+    > connect (socket: c_int, address: *const sockaddr, len: socklen_t) -> c_int
+    > listen (socket: c_int, backlog: c_int) -> c_int
+    > accept (socket: c_int, address: *mut sockaddr, address_len: *mut socklen_t) -> c_int
+    > getsockname (socket: c_int, address: *mut sockaddr, address_len: *mut socklen_t) -> c_int
+    > getpeername (socket: c_int, address: *mut sockaddr, address_len: *mut socklen_t) -> c_int
+    > sendto (socket: c_int, buf: *const c_void, len: size_t, flags: c_int, addr: *const sockaddr, addrlen: socklen_t) -> ssize_t
+    > recvfrom (socket: c_int, buf: *const c_void, len: size_t, flags: c_int, addr: *const sockaddr, addrlen: socklen_t) -> ssize_t
+    > setsockopt (socket: c_int, level: c_int, name: c_int, value: *const c_void, option_len: socklen_t) -> c_int
+    > getsockopt (sockfd: c_int, level: c_int, optname: c_int, optval: *mut c_void, optlen: *mut socklen_t) -> c_int
+    > sendmsg (fd: c_int, msg: *const msghdr, flags: c_int) -> ssize_t
+    > recvmsg (fd: c_int, msg: *mut msghdr, flags: c_int) -> ssize_t
+
+> fcntl (fd: c_int, cmd: c_int, ...) -> c_int
+
+> lseek (fd: c_int, offset: off_t, whence: c_int) -> off_t
+
+> readv (fd: c_int, iov: *const iovec, iovcnt: c_int) -> ssize_t
