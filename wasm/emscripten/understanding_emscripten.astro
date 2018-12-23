@@ -63,12 +63,6 @@ fun socketcall =
     17 = recvmsg (socket, message, flags)
 
 
-
-
-
-
-
-
 # Emscripten runtime data
 # TODO: Find a better implementation. Use global values.
 let static_sealed = false;
@@ -95,3 +89,233 @@ let emscripten_data = EmscriptenData {
     dynamic_base,
     dynamictop_ptr,
 };
+
+
+# (char *restrict s, size_t maxsize, const char *restrict format, const struct tm *restrict timeptr);
+
+prlimit64(pid: pid_t, resource: c_int, new_limit: *const rlimit64, old_limit: *mut rlimit64) -> c_int
+
+#==========================================================================
+let emscripten_data = EmscriptenData {
+    static_sealed,
+    global_base,
+    static_base,
+    static_top,
+    total_stack,
+    stack_base,
+    stack_top,
+    stack_max,
+    dynamic_base,
+    dynamictop_ptr,
+};
+
+
+var module = {
+    arguments: []
+    quit: (status) => process.exit(status)
+    inspect: () => return "[Em Object ]"
+    pre_run: []
+    post_run: []
+    this_program: '' # The path of running script
+    read; () => ...
+    read_binary: () => ...
+}
+
+# 3 configs =
+#   * main in UI thread
+#   * main  proxied to worker
+#   * pthread in worker
+
+if env_is_node:
+    pass
+elif env_is_shell:
+    pass
+elif env_is_web or env_is_worker:
+    pass
+
+let stack_save: stack_alloc: set_temp_ret_0: get_temp_ret_0 = () =>
+    abort "cannot use stack before compiled code is ready!"
+
+var stack_align = 16
+var dynamic_top_ptr =
+
+fun stack_alloc(size):
+    let ret = static_top
+    # NOTE: Some Emscripten magic below!
+    static_top = (static_top + size + 15) & -16
+    ret
+
+fun dynamic_alloc():
+    let ret = memory[dynamictop_ptr >> 3] # 4-byte indices
+    let end = (ret + size + 15) & -16
+    memory[dynamic_top_ptr >> 2] = ret
+    if end >= total_memory:
+        var success = enlarge_memory()
+        if not success:
+            memory[dynamic_top_ptr >> 2] = ret
+            return 0
+    return ret
+
+fun align_memory():
+    if not factor:
+        factor = stack_align
+    var ret: size = ceil(size / factor) * factor
+    return ret
+
+
+
+console.log(
+  "\n----------- MEMORY --------------\n",
+  "TOTAL_MEMORY = ", TOTAL_MEMORY,
+  "\n----------- Stack --------------\n",
+  "\nSTACK_BASE = ", STACK_BASE,
+  "\nSTACKTOP = ", STACKTOP,
+  "\nSTACK_MAX = ", STACK_MAX,
+  "\nTOTAL_STACK = ", TOTAL_STACK,
+  "\n----------- Heap --------------\n",
+  "\nDYNAMICTOP_PTR = ", DYNAMICTOP_PTR,
+  "\nDYNAMIC_BASE = ", DYNAMIC_BASE,
+  "\n----------- Static --------------\n",
+  "\nSTATIC_BASE = ", STATIC_BASE,
+  "\nSTATICTOP = ", STATICTOP,
+  "\n-----------------------------\n",
+);
+
+# ----------- MEMORY --------------
+#  TOTAL_MEMORY =  16777216
+# ----------- Stack --------------
+# STACK_BASE =  6560
+# STACKTOP =  6560
+# STACK_MAX =  5249440
+# TOTAL_STACK =  5242880
+# ----------- Heap --------------
+# DYNAMICTOP_PTR =  6544
+# DYNAMIC_BASE =  5249440
+# ----------- Static --------------
+# STATIC_BASE =  1024
+# STATICTOP =  6560
+# -----------------------------
+
+
+# DYNAMIC_BASE =  5249440
+# STACK_MAX =  5249440
+# STACKTOP =  6560
+# DYNAMICTOP_PTR = 6544
+
+
+Wasmer::###### dynamic_base = 5459520
+Wasmer::###### stack_max = 5459520
+Wasmer::###### stack_top = 216640
+Wasmer::###### dynamictop_ptr = 216624
+
+
+IMPORT
+(import "env" "DYNAMICTOP_PTR" (global (;2;) i32)) => dynamictop_ptr(STATIC_BUMP)
+(import "env" "STACKTOP" (global (;5;) i32)) => stacktop(STATIC_BUMP)
+(import "env" "STACK_MAX" (global (;6;) i32)) => stack_max(STATIC_BUMP)
+
+ENTRY POINT
+var ret = Module['_main'](argc, argv, 0);
+
+
+
+# ENTRY POINT USING ASTRO
+var argc = args.length + 1
+var argv = stack_alloc((argc + 1) * 4) # One more than args # returns offset
+heap[argv] = allocate_utf8_on_stack(module.program_name)
+
+for i in 1..argc:
+    heap[argv + i] = allocate_utf8_on_stack(args[i - 1])
+
+heap[argv + argc] = 0
+
+var ret = !module._main(argc, argv, 0) # What is the 0 for? # Answer = Null byte!
+
+
+fun allocate_utf8_on_stack(str):
+    var size = length_bytes(str) + 1
+    var ret = stack_alloc(size)
+    string_to_utf8_array(str, heap, ret, size)
+    ret
+
+
+
+
+- TIME
+pub unsafe extern "C" fn localtime(time_p: *const time_t) -> *mut tm
+pub unsafe extern "C" fn localtime_r(time_p: *const time_t, result: *mut tm) -> *mut tm
+type time_t = i64;
+pub struct tm {
+    pub tm_sec: c_int,
+    pub tm_min: c_int,
+    pub tm_hour: c_int,
+    pub tm_mday: c_int,
+    pub tm_mon: c_int,
+    pub tm_year: c_int,
+    pub tm_wday: c_int,
+    pub tm_yday: c_int,
+    pub tm_isdst: c_int,
+    pub tm_gmtoff: c_long,
+    pub tm_zone: *const c_char,
+}
+
+
+- ISSUE
+- localtime_r calls tzset - that should be localtime's thing
+- call tzset before localtime_r
+pub struct tm {
+    pub tm_sec: c_int, 4
+    pub tm_min: c_int, 4
+    pub tm_hour: c_int, 4
+    pub tm_mday: c_int, 4
+    pub tm_mon: c_int, 4
+    pub tm_year: c_int, 4
+    pub tm_wday: c_int, 4
+    pub tm_yday: c_int, 4
+    pub tm_isdst: c_int, 4
+    pub tm_gmtoff: c_long, 4?
+    pub tm_zone: *const c_char, 4?
+}
+
+pub struct tm {
+    pub tm_sec: c_int, 4 / 0
+    pub tm_min: c_int, 4 / 4
+    pub tm_hour: c_int, 4 / 8
+    pub tm_mday: c_int, 4 / 12
+    pub tm_mon: c_int, 4 / 16
+    pub tm_year: c_int, 4 / 20
+    pub tm_wday: c_int, 4 / 24
+    pub tm_yday: c_int, 4 / 28
+    pub tm_isdst: c_int, 4 / 32
+    + pub --: c_int, 4 / pub tm_wday: c_int, 4 / 36
+    - pub tm_gmtoff: c_long, 4?
+    pub tm_zone: *const c_char, 4? / 40
+}
+
+
+- asctime_r is specced to behave in an undefined manner if the algorithm would attempt
+- to write out more than 26 bytes (including the null terminator).
+- See http://pubs.opengroup.org/onlinepubs/9699919799/functions/asctime.html
+- Our undefined behavior is to truncate the write to at most 26 bytes, including null terminator.
+
+pub struct tm {
+    pub tm_sec: c_int, 4 / 0
+    pub tm_min: c_int, 4 / 4
+    pub tm_hour: c_int, 4 / 8
+    + pub tm_mday: c_int, 4 / 12
+    - pub tm_mdate: c_int, 4
+    pub tm_mon: c_int, 4 / 16
+    pub tm_year: c_int, 4 / 20
+    pub tm_wday: c_int, 4
+    - pub tm_yday: c_int, 4 / 28
+    - pub tm_isdst: c_int, 4 / 32
+    - pub --: c_int, 4 / pub tm_wday: c_int, 4 / 36
+    - pub tm_gmtoff: c_long, 4?
+    - pub tm_zone: *const c_char, 4? / 40
+}
+
+- 28 bytes max
+Jun 20 12:23:66 1995
+
+
+- tzset

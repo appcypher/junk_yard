@@ -38,6 +38,14 @@ Module['quit'] = function(status, toThrow) {
 Module['preRun'] = [];
 Module['postRun'] = [];
 
+function debug(...args) {
+  console.log("================================");
+  console.log(...args);
+  console.log("================================");
+}
+
+debug("Module = ", Module)
+
 // The environment setup code below is customized to use Module.
 // *** Environment setup code ***
 
@@ -63,6 +71,8 @@ assert(typeof Module['memoryInitializerPrefixURL'] === 'undefined', 'Module.memo
 assert(typeof Module['pthreadMainPrefixURL'] === 'undefined', 'Module.pthreadMainPrefixURL option was removed, use Module.locateFile instead');
 assert(typeof Module['cdInitializerPrefixURL'] === 'undefined', 'Module.cdInitializerPrefixURL option was removed, use Module.locateFile instead');
 assert(typeof Module['filePackagePrefixURL'] === 'undefined', 'Module.filePackagePrefixURL option was removed, use Module.locateFile instead');
+
+
 
 // `/` should be present at the end if `scriptDirectory` is not empty
 var scriptDirectory = '';
@@ -101,7 +111,8 @@ if (ENVIRONMENT_IS_NODE) {
   };
 
   if (process['argv'].length > 1) {
-    Module['thisProgram'] = process['argv'][1].replace(/\\/g, '/');
+    Module['thisProgram'] = process['argv'][1].replace(/\\/g, '/'); // replace for Windows
+    debug("Module.thisProgram = ", Module['thisProgram'])
   }
 
   Module['arguments'] = process['argv'].slice(2);
@@ -242,6 +253,8 @@ moduleOverrides = undefined;
 
 var STACK_ALIGN = 16;
 
+debug(`STACK_ALIGN = ${STACK_ALIGN}`)
+
 // stack management, and other functionality that is provided by the compiled code,
 // should not be used before it is ready
 stackSave = stackRestore = stackAlloc = setTempRet0 = getTempRet0 = function() {
@@ -255,6 +268,8 @@ function staticAlloc(size) {
   assert(STATICTOP < TOTAL_MEMORY, 'not enough memory for static allocation - increase TOTAL_MEMORY');
   return ret;
 }
+
+debug(`STATICTOP = ${STATICTOP}`)
 
 function dynamicAlloc(size) {
   assert(DYNAMICTOP_PTR);
@@ -270,6 +285,9 @@ function dynamicAlloc(size) {
   }
   return ret;
 }
+
+debug(`DYNAMICTOP_PTR = ${DYNAMICTOP_PTR}`)
+debug(`HEAP32 = ${HEAP32}`)
 
 function alignMemory(size, factor) {
   if (!factor) factor = STACK_ALIGN; // stack alignment (16-byte) by default
@@ -5825,27 +5843,32 @@ function copyTempDouble(ptr) {
         case 1: { // socket
           var domain = SYSCALLS.get(), type = SYSCALLS.get(), protocol = SYSCALLS.get();
           var sock = SOCKFS.createSocket(domain, type, protocol);
+          debug(`socket = ${call}`);
           assert(sock.stream.fd < 64); // XXX ? select() assumes socket fd values are in 0..63
           return sock.stream.fd;
         }
         case 2: { // bind
           var sock = SYSCALLS.getSocketFromFD(), info = SYSCALLS.getSocketAddress();
           sock.sock_ops.bind(sock, info.addr, info.port);
+          debug(`socket = ${call}, sockaddr = ${backlog}`);
           return 0;
         }
         case 3: { // connect
           var sock = SYSCALLS.getSocketFromFD(), info = SYSCALLS.getSocketAddress();
           sock.sock_ops.connect(sock, info.addr, info.port);
+          debug(`socket = ${call}, sockaddr = ${backlog}`);
           return 0;
         }
         case 4: { // listen
           var sock = SYSCALLS.getSocketFromFD(), backlog = SYSCALLS.get();
           sock.sock_ops.listen(sock, backlog);
+          debug(`socket = ${call}, sockaddr = ${backlog}`);
           return 0;
         }
         case 5: { // accept
           var sock = SYSCALLS.getSocketFromFD(), addr = SYSCALLS.get(), addrlen = SYSCALLS.get();
           var newsock = sock.sock_ops.accept(sock);
+          debug(`socket = ${call}`);
           if (addr) {
             var res = __write_sockaddr(addr, newsock.family, DNS.lookup_name(newsock.daddr), newsock.dport);
             assert(!res.errno);
@@ -5853,6 +5876,7 @@ function copyTempDouble(ptr) {
           return newsock.stream.fd;
         }
         case 6: { // getsockname
+          debug(`socket = ${call}`);
           var sock = SYSCALLS.getSocketFromFD(), addr = SYSCALLS.get(), addrlen = SYSCALLS.get();
           // TODO: sock.saddr should never be undefined, see TODO in websocket_sock_ops.getname
           var res = __write_sockaddr(addr, sock.family, DNS.lookup_name(sock.saddr || '0.0.0.0'), sock.sport);
@@ -5860,6 +5884,7 @@ function copyTempDouble(ptr) {
           return 0;
         }
         case 7: { // getpeername
+          debug(`socket = ${call}`);
           var sock = SYSCALLS.getSocketFromFD(), addr = SYSCALLS.get(), addrlen = SYSCALLS.get();
           if (!sock.daddr) {
             return -ERRNO_CODES.ENOTCONN; // The socket is not connected.
@@ -5869,6 +5894,7 @@ function copyTempDouble(ptr) {
           return 0;
         }
         case 11: { // sendto
+          debug(`socket = ${call}`);
           var sock = SYSCALLS.getSocketFromFD(), message = SYSCALLS.get(), length = SYSCALLS.get(), flags = SYSCALLS.get(), dest = SYSCALLS.getSocketAddress(true);
           if (!dest) {
             // send, no address provided
@@ -5879,6 +5905,7 @@ function copyTempDouble(ptr) {
           }
         }
         case 12: { // recvfrom
+          debug(`socket = ${call}`);
           var sock = SYSCALLS.getSocketFromFD(), buf = SYSCALLS.get(), len = SYSCALLS.get(), flags = SYSCALLS.get(), addr = SYSCALLS.get(), addrlen = SYSCALLS.get();
           var msg = sock.sock_ops.recvmsg(sock, len);
           if (!msg) return 0; // socket is closed
@@ -5890,9 +5917,11 @@ function copyTempDouble(ptr) {
           return msg.buffer.byteLength;
         }
         case 14: { // setsockopt
+          debug(`socket = ${call}`);
           return -ERRNO_CODES.ENOPROTOOPT; // The option is unknown at the level indicated.
         }
         case 15: { // getsockopt
+          debug(`socket = ${call}`);
           var sock = SYSCALLS.getSocketFromFD(), level = SYSCALLS.get(), optname = SYSCALLS.get(), optval = SYSCALLS.get(), optlen = SYSCALLS.get();
           // Minimal getsockopt aimed at resolving https://github.com/kripken/emscripten/issues/2211
           // so only supports SOL_SOCKET with SO_ERROR.
@@ -5907,6 +5936,7 @@ function copyTempDouble(ptr) {
           return -ERRNO_CODES.ENOPROTOOPT; // The option is unknown at the level indicated.
         }
         case 16: { // sendmsg
+          debug(`socket = ${call}`);
           var sock = SYSCALLS.getSocketFromFD(), message = SYSCALLS.get(), flags = SYSCALLS.get();
           var iov = HEAP32[(((message)+(8))>>2)];
           var num = HEAP32[(((message)+(12))>>2)];
@@ -5938,6 +5968,7 @@ function copyTempDouble(ptr) {
           return sock.sock_ops.sendmsg(sock, view, 0, total, addr, port);
         }
         case 17: { // recvmsg
+          debug(`socket = ${call}`);
           var sock = SYSCALLS.getSocketFromFD(), message = SYSCALLS.get(), flags = SYSCALLS.get();
           var iov = HEAP32[(((message)+(8))>>2)];
           var num = HEAP32[(((message)+(12))>>2)];
@@ -6183,7 +6214,6 @@ function copyTempDouble(ptr) {
         var mask = 32;
         var stream = FS.getStream(fd);
         if (stream) {
-          mask = SYSCALLS.DEFAULT_POLLMASK;
           if (stream.stream_ops.poll) {
             mask = stream.stream_ops.poll(stream);
           }
@@ -6521,6 +6551,8 @@ function copyTempDouble(ptr) {
     return -e.errno;
   }
   }
+
+  // debug(`HEAP32 = ${HEAP32}`)
 
   function ___syscall340(which, varargs) {SYSCALLS.varargs = varargs;
   try {

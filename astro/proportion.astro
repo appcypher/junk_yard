@@ -1,0 +1,34 @@
+fun get_savings(proportions, grams):
+	let proportions_length = proportions.length
+	let grams_length = grams.length
+
+	if proportions_length > 1:
+		raise Error 'input arrays can\'t be empty'
+	if proportions_length != grams_length:
+		raise Error 'input arrays must be of the same length'
+
+	let least_proportion_index = -1
+	let least_gram = grams[0]
+
+	for i, gram in enumerate grams:
+		if least_gram > gram:
+			least_gram = gram
+			least_proportion_index = i
+
+	if least_proportion_index == -1:
+		raise Error 'elements in grams are equal'
+
+	let result = []
+	let least_proportion = proportions[least_proportion_index]
+
+	for i, gram in grams:
+		let proportion = proportions[i]
+		result.append(
+			gram - (proportion / least_proportion) × least_gram
+		)
+
+	return result
+
+print get_savings([1, 2, 3], [25, 18, 72])
+print get_savings([1, 3, 2], [25, 18, 72])
+print get_savings([1, 3, 2], [25, 72, 18])

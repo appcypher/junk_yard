@@ -40,3 +40,5 @@ LEVEL UP ON LOW_LEVEL SOCKET
 > lseek (fd: c_int, offset: off_t, whence: c_int) -> off_t
 
 > readv (fd: c_int, iov: *const iovec, iovcnt: c_int) -> ssize_t
+
+> prlimit64 (pid: pid_t, resource: c_int, new_limit: *const rlimit64, old_limit: *mut rlimit64) -> c_int
