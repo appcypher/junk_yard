@@ -10,8 +10,11 @@ void *get_address() {
     return address;
 }
 
+// COMPILATION
 // clang ctypes_example.c -dynamiclib -o libctypes_example.dylib
 
+
+// PYTHON CODE
 // from ctypes import cdll, c_uint, c_void_p, CFUNCTYPE
 
 // # Load library and get library
