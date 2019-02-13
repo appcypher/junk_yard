@@ -1,6 +1,10 @@
 (module
   (type (func (param i32 i64) (result i32)))
+  (type (func))
   (import "env" "func" (func (type 0)))
   (import "env" "table" (table 0 1 anyfunc))
-  (func (;0;)) ;; A function with no code section.
+  (func (;0;) (type 1)
+    (local (;0;) i32)
+    (local (;1;) i64 i64)
+  )
 )
