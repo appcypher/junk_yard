@@ -4,6 +4,8 @@
 
 c/*.wasm
 c/*.wat
+c/*.wast
+c/*.wasm.map
 c/*.js
 c/node_modules
 c/*.json
