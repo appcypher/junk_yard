@@ -3,7 +3,7 @@
 int main() {
     char buff[255];
     FILE *fp;
-    fp = fopen("/Users/andeladeveloper/Desktop/random_code/text", "r");
+    fp = fopen("/Users/andeladeveloper/Desktop/junk_yard/text", "r");
 
     fgets(buff, 254, fp);
 
