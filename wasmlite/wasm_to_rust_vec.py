@@ -2,14 +2,18 @@
 import sys
 import os
 
+# Personal usage:
+# - wat2wasm x.wat -o temp.wasm; python3 wasm_to_rust_vec.py temp
+# Usage:
+# - python3 wasm_to_rust_vec file
 def convert_to_rust_vec(filename):
     file_size = os.path.getsize(filename)
     wasm_file = open(wasm_filename, 'rb')
-    vec = "vec![\n"
+    vec = "\n    vec![\n        "
     for i in range(file_size):
         byte = wasm_file.read(1)
-        vec += f"    {int.from_bytes(byte, byteorder='little'):#04x},\n"
-    vec += "\n]"
+        vec += f"{int.from_bytes(byte, byteorder='little'):#04x}, " + ("\n        " if not ((i + 1) % 15) and i != 1 else "")
+    vec += "\n    ]\n"
     print(f"=== output ===\n", vec)
     return vec
 
