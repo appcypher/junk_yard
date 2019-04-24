@@ -3,7 +3,7 @@
 /* The generated code is subject to the original license. */
 /* Compiled for: MacOSX, amd64, clang */
 /* Command for C compiler:
-   clang -c  -w  -I/Users/andeladeveloper/.choosenim/toolchains/nim-0.18.0/lib -o '/Users/andeladeveloper/Desktop/Test Codes/nimcache/stdlib_system.o' '/Users/andeladeveloper/Desktop/Test Codes/nimcache/stdlib_system.c' */
+   clang -c  -w  -I/Users/andeladeveloper/.choosenim/toolchains/nim-0.18.0/lib -o /Users/andeladeveloper/Desktop/experiments/nim/nimcache/stdlib_system.o /Users/andeladeveloper/Desktop/experiments/nim/nimcache/stdlib_system.c */
 #define NIM_NEW_MANGLING_RULES
 #define NIM_INTBITS 64
 
@@ -397,7 +397,6 @@ NI counter;
 NI max;
 tyArray_LZ6VIxbN559biiZQVaUyyvA data;
 };
-typedef NI tyArray_Bd4h7Ocx9bGTvrKzPIWNlHw[3];
 struct tySequence_uB9b75OUPRENsBAu4AnoePA {
   TGenericSeq Sup;
   tyObject_StackTraceEntry_oLyohQ7O2XOvGnflOss8EA data[SEQ_DECL_SIZE];
@@ -873,8 +872,6 @@ N_NIMCALL(void, genericDeepCopyOpenArray)(void* dest, void* src, NI len, TNimTyp
 N_LIB_PRIVATE N_NIMCALL(NI, xlen_ZV2n9cO2rypnA5UdVFDRIRQ)(NimStringDesc* x);
 static N_INLINE(NIM_BOOL, eqeq__9ccNWqrTIE9bcAqE2Q0ro7zgsystem)(NCSTRING x, NCSTRING y);
 N_LIB_PRIVATE N_NIMCALL(NIM_BOOL, contains_ShDs2EBcKTg10Om1piaG9aw)(tyObject_SmallChunk_tXn60W2f8h3jgAYdEmy5NQ* list, tyObject_SmallChunk_tXn60W2f8h3jgAYdEmy5NQ* x);
-N_LIB_PRIVATE N_NIMCALL(NimStringDesc*, collectionToString_TtrPdzsaVfFUJf5k1e89aaQ)(tyArray_Bd4h7Ocx9bGTvrKzPIWNlHw x, NimStringDesc* prefix, NimStringDesc* separator, NimStringDesc* suffix);
-N_LIB_PRIVATE N_NIMCALL(void, addQuoted_nyaZAljVI03SH2d9cnD0WMw)(NimStringDesc** s, NI x);
 NIM_BOOL nimvm_IAxmsqnME4Jmed24hOgrFQ;
 NI nim_program_result;
 tyProc_hgOQFBQi19biNdOUUkFOOxA globalRaiseHook_JbO1ti4ULxrw54m4zNPbpA;
@@ -13687,86 +13684,6 @@ N_LIB_PRIVATE N_NIMCALL(NIM_BOOL, contains_ShDs2EBcKTg10Om1piaG9aw)(tyObject_Sma
 		} LA2: ;
 	}
 	}BeforeRet_: ;
-	popFrame();
-	return result;
-}
-
-N_LIB_PRIVATE N_NIMCALL(void, addQuoted_nyaZAljVI03SH2d9cnD0WMw)(NimStringDesc** s, NI x) {
-	nimfr_("addQuoted", "system.nim");
-	nimln_(3974, "system.nim");
-	add_IbYQ9cTcoQ89aIwM2IEYGMng(s, ((NI64) (x)));
-	popFrame();
-}
-
-N_LIB_PRIVATE N_NIMCALL(NimStringDesc*, collectionToString_TtrPdzsaVfFUJf5k1e89aaQ)(tyArray_Bd4h7Ocx9bGTvrKzPIWNlHw x, NimStringDesc* prefix, NimStringDesc* separator, NimStringDesc* suffix) {
-	NimStringDesc* result;
-	NIM_BOOL firstElement;
-	nimfr_("collectionToString", "system.nim");
-	result = (NimStringDesc*)0;
-	nimln_(2538, "system.nim");
-	result = copyString(prefix);
-	nimln_(2539, "system.nim");
-	firstElement = NIM_TRUE;
-	{
-		NI value;
-		NI i;
-		value = (NI)0;
-		nimln_(2199, "system.nim");
-		i = ((NI) 0);
-		nimln_(2200, "system.nim");
-		{
-			if (!(((NI) (i)) <= ((NI) 2))) goto LA4_;
-			{
-				nimln_(2201, "system.nim");
-				while (1) {
-					NI TM_Q5wkpxktOdTGvlSRo9bzt9aw_150;
-					nimln_(2202, "system.nim");
-					value = x[(i)- 0];
-					nimln_(2541, "system.nim");
-					{
-						if (!firstElement) goto LA10_;
-						nimln_(2542, "system.nim");
-						firstElement = NIM_FALSE;
-					}
-					goto LA8_;
-					LA10_: ;
-					{
-						nimln_(2544, "system.nim");
-						result = resizeString(result, separator->Sup.len + 0);
-appendString(result, separator);
-					}
-					LA8_: ;
-					nimln_(2553, "system.nim");
-					addQuoted_nyaZAljVI03SH2d9cnD0WMw((&result), value);
-					nimln_(2203, "system.nim");
-					{
-						if (!(((NI) 2) <= ((NI) (i)))) goto LA15_;
-						goto LA6;
-					}
-					LA15_: ;
-					nimln_(2204, "system.nim");
-					TM_Q5wkpxktOdTGvlSRo9bzt9aw_150 = addInt(i, ((NI) 1));
-					if (TM_Q5wkpxktOdTGvlSRo9bzt9aw_150 < 0 || TM_Q5wkpxktOdTGvlSRo9bzt9aw_150 > 2) raiseOverflow();
-					i = (NI)(TM_Q5wkpxktOdTGvlSRo9bzt9aw_150);
-				}
-			} LA6: ;
-		}
-		LA4_: ;
-	}
-	nimln_(2555, "system.nim");
-	result = resizeString(result, suffix->Sup.len + 0);
-appendString(result, suffix);
-	popFrame();
-	return result;
-}
-
-N_LIB_PRIVATE N_NIMCALL(NimStringDesc*, dollar__kKwBoyXI6gKwKAFIW1DTjQ)(tyArray_Bd4h7Ocx9bGTvrKzPIWNlHw x) {
-	NimStringDesc* result;
-	nimfr_("$", "system.nim");
-	result = (NimStringDesc*)0;
-	nimln_(3433, "system.nim");
-	nimln_(3434, "system.nim");
-	result = collectionToString_TtrPdzsaVfFUJf5k1e89aaQ(x, ((NimStringDesc*) &TM_Q5wkpxktOdTGvlSRo9bzt9aw_105), ((NimStringDesc*) &TM_Q5wkpxktOdTGvlSRo9bzt9aw_98), ((NimStringDesc*) &TM_Q5wkpxktOdTGvlSRo9bzt9aw_106));
 	popFrame();
 	return result;
 }
