@@ -1,7 +1,8 @@
-global _start
+;
 
+    global _start
 
-section .text
+    section .text
 
 _start:
     mov     rax, 0x3c ; write
@@ -15,7 +16,7 @@ _start:
     syscall
 
 
-section .data
+    section .data
 
 msg:    db      "Hello, world!", 10
 .length:   equ     $ - msg

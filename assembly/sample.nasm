@@ -1,4 +1,4 @@
-; nasm -f macho64 mac_hello.nasm && ld -lSystem -macosx_version_min 10.3 -o mac_hello mac_hello.o && ./mac_hello
+; nasm -f macho64 -g sample.nasm -o obj/sample.o && ld -lSystem -macosx_version_min 10.3 -o bin/sample obj/sample.o && bin/sample
 
     global start
 

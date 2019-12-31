@@ -1,6 +1,7 @@
 .vscode/
 
 **/*.out
+**/*.o
 
 c/*.wasm
 c/*.wat
