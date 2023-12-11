@@ -11,3 +11,4 @@ c/*.js
 c/node_modules
 c/*.json
 **/.DS_Store
+**/target

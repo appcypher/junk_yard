@@ -21,3 +21,4 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         wasm_filename = f"./{sys.argv[1]}.wasm"
         convert_to_rust_vec(wasm_filename)
+s

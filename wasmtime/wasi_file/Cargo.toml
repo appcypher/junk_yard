@@ -1,0 +1,17 @@
+[package]
+name = "wasi_file"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "wasi_file_args"
+path = "src/wasi_file_args.rs"
+
+[lib]
+crate-type = ["cdylib"]
+name = "wasi_file_alloc"
+path = "src/wasi_file_alloc.rs"
+
+[dependencies]

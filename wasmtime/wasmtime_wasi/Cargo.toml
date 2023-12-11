@@ -1,0 +1,13 @@
+[package]
+name = "wasmtime_wasi"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "wasmtime_alloc"
+path = "src/wasmtime_alloc.rs"
+
+[dependencies]
+anyhow = "1.0.75"
+wasmtime = "14.0.4"
+wasmtime-wasi = "14.0.4"
