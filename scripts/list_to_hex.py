@@ -1,7 +1,14 @@
+#!/usr/bin/env python3
+
 import sys
 import pyperclip
 
 def main():
+    # Check if there are arguments
+    if len(sys.argv) < 2:
+        print("Usage: list_to_hex.py '[1, 2, 3]'")
+        sys.exit(1)
+
     # Get a list of numbers from arguments
     list_str = sys.argv[1]
 
@@ -15,11 +22,11 @@ def main():
     # Convert the list of integers to a list of hex strings
     list_hex = [hex(i) for i in list_int]
 
-    # Convert the list of hex strings to a list of hex strings with 0x prefix
-    list_hex_0x = [i[2:].zfill(2) for i in list_hex]
+    # Convert the list of hex strings to a list of hex strings
+    list_hex = [i[2:].zfill(2) for i in list_hex]
 
-    # Convert the list of hex strings with 0x prefix to a string
-    list_hex_str = ' '.join(list_hex_0x)
+    # Convert the list of hex strings to a string
+    list_hex_str = ' '.join(list_hex)
 
     # Print the string
     print(f"value: {list_hex_str}")
