@@ -1,0 +1,20 @@
+[package]
+name = "mps-test"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "mat_to_device"
+path = "src/mat_to_device.rs"
+
+[[bin]]
+name = "init_on_device"
+path = "src/init_on_device.rs"
+
+[[bin]]
+name = "layer_on_device"
+path = "src/layer_on_device.rs"
+
+[dependencies]
+anyhow = "1.0.79"
+tch = "0.13.0"

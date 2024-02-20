@@ -271,6 +271,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "mps-test"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "tch",
+]
+
+[[package]]
 name = "ndarray"
 version = "0.15.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -512,14 +520,6 @@ dependencies = [
  "thiserror",
  "torch-sys",
  "zip",
-]
-
-[[package]]
-name = "tch_rs"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "tch",
 ]
 
 [[package]]
