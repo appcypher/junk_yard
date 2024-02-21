@@ -4,16 +4,20 @@ version = "0.1.0"
 edition = "2021"
 
 [[bin]]
-name = "mat_to_device"
-path = "src/mat_to_device.rs"
+name = "move"
+path = "src/move.rs"
 
 [[bin]]
-name = "init_on_device"
-path = "src/init_on_device.rs"
+name = "vs"
+path = "src/vs.rs"
 
 [[bin]]
-name = "layer_on_device"
-path = "src/layer_on_device.rs"
+name = "sc"
+path = "src/sc.rs"
+
+[[bin]]
+name = "sparse"
+path = "src/sparse.rs"
 
 [dependencies]
 anyhow = "1.0.79"

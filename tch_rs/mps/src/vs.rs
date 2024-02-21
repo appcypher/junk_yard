@@ -8,17 +8,18 @@ fn main() -> anyhow::Result<()> {
     // Create device and var store
     let device = Device::Mps;
     let vs = VarStore::new(device);
+    let vs_path = vs.root();
 
     // Initialize layer matrix on the device
     // let mat = nn::init(Init::Const(0.0), &[2, 3], device);
     // let mat = Tensor::f_zeros(&[2, 3], (Kind::Float, device))?;
-    let layer = vs.root().f_ones("layer", &[2, 3])?; // [[1, 1, 1], [1, 1, 1]]
+    let layer = vs_path.f_ones("layer", &[2, 3])?; // [[1, 1, 1], [1, 1, 1]]
 
     // Initialize input vector on the device
-    let input = vs.root().f_ones("input", &[3])?; // [1, 1, 1]
+    let input = vs_path.f_ones("input", &[3])?; // [1, 1, 1]
 
     // Initialize threshold vector on the device
-    let threshold = vs.root().randn("threshold", &[2], 0., 1.);
+    let threshold = vs_path.f_randn("threshold", &[2], 0., 1.)?;
 
     println!("Threshold dimensions: {:?}", threshold.size());
 
