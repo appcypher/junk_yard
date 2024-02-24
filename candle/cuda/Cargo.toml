@@ -1,0 +1,15 @@
+[package]
+name = "cuda-candle"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "sparse_f16"
+path = "src/sparse_f16.rs"
+
+[[bin]]
+name = "sparse_u8"
+path = "src/sparse_u8.rs"
+
+[dependencies]
+candle-core = { git = "https://github.com/huggingface/candle.git", version = "0.4.0", features = ["cuda"] }
