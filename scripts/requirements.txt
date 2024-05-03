@@ -1,0 +1,16 @@
+base58==2.1.1
+bases==0.3.0
+cffi==1.16.0
+cryptography==42.0.5
+ecdsa==0.19.0
+morphys==1.0
+multiformats==0.3.1.post4
+multiformats-config==0.3.1
+py-multibase==1.0.3
+py-multicodec==0.2.1
+pycparser==2.22
+python-baseconv==1.2.2
+six==1.16.0
+typing-validation==1.2.11.post1
+typing_extensions==4.11.0
+varint==1.0.2
