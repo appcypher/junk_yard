@@ -47,7 +47,8 @@ key_options = {
 base_options = {
     "1": "base58btc",
     "2": "base64",
-    "3": "base16"
+    "3": "base32",
+    "4": "base16"
 }
 
 # User input for key type
